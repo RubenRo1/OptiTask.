@@ -1,6 +1,6 @@
 <?php
 // Tu clave API de Hugging Face
-$apiKey = "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";  // Reemplaza esto con tu clave real
+// $apiKey = "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";  
 
 // La URL del modelo que deseas usar
 $model = "distilgpt2";  // Usando un modelo más pequeño, puedes probar con "gpt2" o "gpt-neo"
