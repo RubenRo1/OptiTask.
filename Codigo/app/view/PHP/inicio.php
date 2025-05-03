@@ -24,7 +24,7 @@ if (isset($_POST['cerrar_sesion'])) {
 }
 
 if (isset($_POST['modificar_cuenta'])) {
-   
+
     header("Location: cuenta.php");
     exit();
 }
@@ -51,7 +51,7 @@ function cerrarSesion()
 </head>
 
 <body>
-
+    <?php include "../Generales/header.php" ?>
     <h1>Bienvenido, <?php echo htmlspecialchars($nombre_usuario); ?></h1>
 
     <p><strong>Correo:</strong> <?php echo htmlspecialchars($usuario->getEmail()); ?></p>

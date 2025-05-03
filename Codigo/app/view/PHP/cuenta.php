@@ -96,11 +96,11 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Cuenta</title>
-        <link rel="stylesheet" href="../CSS/cuenta.css">
+        <!-- <link rel="stylesheet" href="../CSS/cuenta.css"> -->
     </head>
 
     <body>
-        <?php // include "../Generales/nav.php" ?>
+        <?php include "../Generales/header.php" ?>
         <h1>Datos personales</h1>
         <div class="content">
             <form action="cuenta.php" method="POST">
