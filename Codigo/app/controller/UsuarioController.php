@@ -26,9 +26,8 @@ class UsuarioController
     {
 
         if (Usuario::UsuarioExiste($nombre)) {
-          
+
             return false;
-        
         }
 
         $nuevoUsuario = new Usuario();
@@ -41,16 +40,49 @@ class UsuarioController
     }
 
     // Modificar datos del usuario
+    // public function modificarUsuario($nuevoNombre, $nuevoEmail, $nuevaContraseña)
+    // {
+    //     $usuario = new Usuario();
+
+    //     if (Usuario::UsuarioExiste($nuevoNombre)) {
+
+
+    //     }else {
+
+    //         $usuario->setNombre($nuevoNombre);
+    //         $usuario->setEmail($nuevoEmail);
+    //         $usuario->setContraseña($nuevaContraseña);
+    //         $usuario->update();
+
+    //     }
+
+    // }
+
     public function modificarUsuario($id_usuario, $nuevoNombre, $nuevoEmail, $nuevaContraseña)
     {
+        // Obtener el usuario actual desde la base de datos
         $usuario = Usuario::getUserById($id_usuario);
-        if ($usuario) {
-            $usuario->setNombre($nuevoNombre);
-            $usuario->setEmail($nuevoEmail);
-            $usuario->setContraseña($nuevaContraseña);
-            $usuario->update();
+
+        if (!$usuario) {
+            return false; // No existe el usuario actual
         }
+
+        // Si el nuevo nombre ya existe y no es el mismo que el actual, no permitir
+        if (Usuario::UsuarioExiste($nuevoNombre)) {
+
+            return false; // Nombre de usuario ya en uso
+
+        }
+
+        // Actualizar campos
+        
+        $usuario->setNombre($nuevoNombre);
+        $usuario->setEmail($nuevoEmail);
+        $usuario->setContraseña($nuevaContraseña);
+        
+        $usuario->update();
     }
+
 
     // Eliminar usuario
     public function eliminarUsuario($id_usuario)
@@ -63,9 +95,9 @@ class UsuarioController
 
 
     // Modificar el nombre del usuario
-    public function modificarNombre($id_usuario, $nuevoNombre)
+    public function modificarNombre($nombre, $nuevoNombre)
     {
-        $usuario = Usuario::getUserById($id_usuario);
+        $usuario = Usuario::getUserByName($nombre);
         if ($usuario) {
             $usuario->setNombre($nuevoNombre);
             $usuario->update();

@@ -20,11 +20,18 @@ if (!isset($_SESSION['nombre_usuario'])) {
 
 if (isset($_POST['cerrar_sesion'])) {
     $contraseña_actual = $_POST['contraseña_actual'];
-    cerrarSesion($usuario);
+    cerrarSesion();
+}
+
+if (isset($_POST['modificar_cuenta'])) {
+   
+    header("Location: cuenta.php");
+    exit();
 }
 
 
-function cerrarSesion($usuario)
+
+function cerrarSesion()
 {
     session_destroy();
     header("Location: login.php");
@@ -54,6 +61,7 @@ function cerrarSesion($usuario)
     <!-- Enlace para cerrar sesión -->
     <form method="POST" action="">
         <button type="submit" name="cerrar_sesion">Cerrar Sesión</button>
+        <button type="submit" name="modificar_cuenta">Cuenta</button>
     </form>
 
 </body>

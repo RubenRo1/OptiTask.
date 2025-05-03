@@ -204,8 +204,8 @@ class Usuario
     {
         try {
             $conn = getDBConnection();
-            $stmt = $conn->prepare("UPDATE usuario SET nombre = ?, email = ? WHERE id_usuario = ?");
-            $stmt->execute([$this->nombre, $this->email, $this->id_usuario]);
+            $stmt = $conn->prepare("UPDATE usuario SET nombre = ?, email = ?, contraseña = ? WHERE id_usuario = ?");
+            $stmt->execute([$this->nombre, $this->email, $this->contraseña, $this->id_usuario]);
         } catch (PDOException $e) {
             echo "Error al actualizar el usuario: " . $e->getMessage();
         }
