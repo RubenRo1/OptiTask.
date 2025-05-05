@@ -76,7 +76,8 @@ if (isset($_POST['formCreate']) && $_POST['formCreate'] == 'crearUsuario') {
 
         if($usuarioController->crearUsuario($nombreUsuario, $correo, $contraseña)){
 
-            echo "<p>Se ha creado el usuario " . $nombreUsuario . ".</p>";
+            header("Location: login.php");
+            exit();
             
         }else{
             echo "<p>El usuario ya existe.</p>";

@@ -1,28 +1,34 @@
 <header>
-    <div class="logo-container">
-        <img src="ruta/a/tu/logo.png" alt="Logo" class="logo">
-    </div>
     <nav>
-        <ul>
-            <li><a href="inicio.php">Inicio</a></li>
-            <li><a href="tareas.php">Mis Tareas</a></li>
-            <li><a href="tareas.php">Contacto</a></li>
-            <li><?php echo '<a href="cuenta.php">' . htmlspecialchars($nombre_usuario) . '</a>'; ?></li>
+        <div class="nav-left">
+            <ul>
+                <li><a href="inicio.php" class="Logo"><span>O</span>pti<span>T</span>ask</a></li>
+                <li><a href="inicio.php">Inicio</a></li>
+                <li><a href="tareas.php">Mis Tareas</a></li>
+                <li><a href="contacto.php">Contacto</a></li>
+            </ul>
+        </div>
+        <div class="nav-right">
+            <ul>
+                <?php if (isset($_SESSION['nombre_usuario'])): ?>
+                    <li style="display: flex; align-items: center; gap: 1px;">
 
-            <?php if (!isset($_SESSION['nombre_usuario'])): ?>
-                <ul>
+                        <img src="../Imagenes/Logo.png" alt="Foto de perfil" style="width: 65px; height: 45px; border-radius: 50%;">
+                        <a class="Space" href="cuenta.php"><?= htmlspecialchars($_SESSION['nombre_usuario']) ?></a>
+
+                    </li>
+
+                <?php else: ?>
                     <li><a href="login.php">Iniciar sesión</a></li>
                     <li><a href="registro.php">Registrarse</a></li>
-                </ul>
-            <?php endif; ?>
-
-        </ul>
+                <?php endif; ?>
+            </ul>
+        </div>
     </nav>
 </header>
 
+
 <style>
-    /* Estilos básicos para el header */
-    /* Estilos globales */
     html,
     body {
         margin: 0;
@@ -36,41 +42,52 @@
     header {
         background-color: #333;
         color: white;
-        display: flex;
-        justify-content: flex-start;
-        align-items: center;
-        padding: 0 10px;
         width: 100%;
-        margin: 0;
+        padding: 0 20px;
         box-sizing: border-box;
     }
 
-    nav ul {
-        list-style-type: none;
-        margin: 0 10px;
-        padding: 0 10px;
+    nav {
         display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    nav .nav-left ul,
+    nav .nav-right ul {
+        display: flex;
+        list-style: none;
+        margin: 0;
+        padding: 0;
     }
 
     nav ul li {
         margin-right: 10px;
-
     }
 
     nav ul li a {
-
         text-decoration: none;
         padding: 10px 15px;
         color: white;
         display: block;
-        transition: background-color 0.3s, box-shadow 0.3s;
         border-radius: 10px;
+        transition: background-color 0.3s, box-shadow 0.3s;
     }
 
     nav ul li a:hover {
         background-color: grey;
-        color: white;
-        border-radius: 10px;
-        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
     }
+
+    .Logo {
+        font-family: 'Poppins', sans-serif;
+        font-weight: 700;
+        color: #3A7BFF;
+    }
+
+    .Logo span {
+        color: #00C897;
+    }
+
+    .Space {}
 </style>

@@ -8,8 +8,7 @@ session_start();
 if (!isset($_SESSION['nombre_usuario'])) {
 
     $usuario = null;
-    echo "No estás autenticado. Inicia sesión para continuar.";
-    exit;
+    $nombre_usuario = null;
 } else {
 
     $usuarioController = new UsuarioController();
@@ -52,11 +51,14 @@ function cerrarSesion()
 
 <body>
     <?php include "../Generales/header.php" ?>
-    <h1>Bienvenido, <?php echo htmlspecialchars($nombre_usuario); ?></h1>
+    <h1>Bienvenido <?php echo htmlspecialchars($nombre_usuario); ?></h1>
 
-    <p><strong>Correo:</strong> <?php echo htmlspecialchars($usuario->getEmail()); ?></p>
-    <p><strong>Fecha de registro:</strong> <?php echo htmlspecialchars($usuario->getFechaRegistro()); ?></p>
-
+    <?php if ($usuario != null): ?>
+        <p><strong>Correo:</strong> <?php echo htmlspecialchars($usuario->getEmail()); ?></p>
+        <p><strong>Fecha de registro:</strong> <?php echo htmlspecialchars($usuario->getFechaRegistro()); ?></p>
+    <?php else: ?>
+        <p>No hay información de usuario disponible.</p>
+    <?php endif; ?>
 
     <!-- Enlace para cerrar sesión -->
     <form method="POST" action="">
