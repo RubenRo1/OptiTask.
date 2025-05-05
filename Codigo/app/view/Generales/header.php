@@ -14,7 +14,7 @@
                     <li style="display: flex; align-items: center; gap: 1px;">
 
                         <img src="../Imagenes/Logo.png" alt="Foto de perfil" style="width: 65px; height: 45px; border-radius: 50%;">
-                        <a class="Space" href="cuenta.php"><?= htmlspecialchars($_SESSION['nombre_usuario']) ?></a>
+                        <a href="cuenta.php"><?= htmlspecialchars($_SESSION['nombre_usuario']) ?></a>
 
                     </li>
 
@@ -89,5 +89,5 @@
         color: #00C897;
     }
 
-    .Space {}
+    
 </style>

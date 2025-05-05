@@ -40,14 +40,14 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         // Enviar correo
         if ($mail->send()) {
             
-            header("Location: ../PHP/contacto.php?enviado=1"); // Redirigir a la página de contacto con un mensaje de confirmación
+            header("Location: ../PHP/contacto.php?estado=ok"); // Redirigir a la página de contacto con un mensaje de confirmación
         } else {
-            header("Location: ../PHP/contacto.php?enviado=0"); // Redirigir a la página de contacto con un mensaje de confirmación
+            header("Location: ../PHP/contacto.php?estado=error"); // Redirigir a la página de contacto con un mensaje de confirmación
             echo 'Hubo un error al enviar el mensaje: ' . $mail->ErrorInfo;
         }
 
     } catch (Exception $e) {
-        header("Location: ../PHP/contacto.php?enviado=0"); // Redirigir a la página de contacto con un mensaje de confirmación
+        header("Location: ../PHP/contacto.php?estado=error"); // Redirigir a la página de contacto con un mensaje de confirmación
         echo "Error en el envío del mensaje: {$mail->ErrorInfo}";
     }
 }

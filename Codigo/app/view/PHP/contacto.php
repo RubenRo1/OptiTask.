@@ -1,4 +1,11 @@
 <?php
+
+require_once(__DIR__ . '/../../../rutas.php');
+require_once(CONTROLLER . 'UsuarioController.php');
+require_once(MODEL . 'Usuario.php');
+
+session_start();
+
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $nombre = htmlspecialchars($_POST["nombre"]);
     $email = htmlspecialchars($_POST["email"]);
@@ -8,6 +15,17 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     // Aquí podrías guardar en base de datos o enviar un correo
     $confirmacion = "Gracias por contactarnos, $nombre. Te responderemos pronto.";
 }
+if (!isset($_SESSION['nombre_usuario'])) {
+
+    $usuario = null;
+    $nombre_usuario = null;
+} else {
+
+    $usuarioController = new UsuarioController();
+    $nombre_usuario = $_SESSION['nombre_usuario'];
+    $usuario = $usuarioController->getUserByName($nombre_usuario);
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -60,7 +78,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             color: green;
             font-weight: bold;
         }
-        .mensaje-confirmacion {
+
+        .mensaje-fallo {
             color: red;
             font-weight: bold;
         }
@@ -73,15 +92,19 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
         <h2>Contáctanos</h2>
 
-        <?php if (isset($_GET['enviado'])): ?>
+        <?php if (isset($_GET['estado'])): ?>
 
-            <p class="mensaje-confirmacion">¡Envio exitoso! Gracias por contactarnos. Te responderemos pronto.</p>
-        
-        <?php else: ?>
-            
-            <p class="mensaje-fallo">Lo sentimos, algo ha fallado. Por favor, inténtalo de nuevo más tarde.</p>
+            <?php if ($_GET['estado'] === 'ok'): ?>
+
+                <p class="mensaje-confirmacion">¡Envío exitoso! Gracias por contactarnos. Te responderemos pronto.</p>
+                
+            <?php elseif ($_GET['estado'] === 'error'): ?>
+
+                <p class="mensaje-fallo">Lo sentimos, algo ha fallado. Por favor, inténtalo de nuevo más tarde.</p>
+            <?php endif; ?>
 
         <?php endif; ?>
+
 
         <form method="POST" action="enviarCorreo.php">
 
