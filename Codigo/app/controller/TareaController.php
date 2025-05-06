@@ -14,13 +14,16 @@ class TareaController {
     public function getTareaById($id_tarea) {
         return Tarea::getTareaById($id_tarea);
     }
+    // Obtener tareas por usuario
+    public function getTareasByUser($id_usuario) {
+        return Tarea::getTareasByUser($id_usuario);
+    }
 
     // Crear una nueva tarea
-    public function crearTarea($id_usuario, $titulo, $fecha_creacion, $fecha_limite, $prioridad, $estado, $descripcion, $tiempo_estimado, $id_categoria = null) {
+    public function crearTarea($id_usuario, $titulo, $fecha_limite, $prioridad, $estado, $descripcion, $tiempo_estimado, $id_categoria = null) {
         $nuevaTarea = new Tarea();
         $nuevaTarea->setIdUsuario($id_usuario);
         $nuevaTarea->setTitulo($titulo);
-        $nuevaTarea->setFechaCreacion($fecha_creacion);
         $nuevaTarea->setFechaLimite($fecha_limite);
         $nuevaTarea->setPrioridad($prioridad);
         $nuevaTarea->setEstado($estado);
@@ -32,11 +35,10 @@ class TareaController {
     }
 
     // Modificar tarea (cualquier campo)
-    public function modificarTarea($id_tarea, $titulo, $fecha_creacion, $fecha_limite, $prioridad, $estado, $descripcion, $tiempo_estimado, $id_categoria = null) {
+    public function modificarTarea($id_tarea, $titulo, $fecha_limite, $prioridad, $estado, $descripcion, $tiempo_estimado, $id_categoria = null) {
         $tarea = Tarea::getTareaById($id_tarea);
         if ($tarea) {
             $tarea->setTitulo($titulo);
-            $tarea->setFechaCreacion($fecha_creacion);
             $tarea->setFechaLimite($fecha_limite);
             $tarea->setPrioridad($prioridad);
             $tarea->setEstado($estado);

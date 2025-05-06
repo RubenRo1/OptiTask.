@@ -38,17 +38,19 @@ if (!isset($_SESSION['nombre_usuario'])) {
     <style>
         .contact-form {
 
-            background: white;
+            background: #2B2B2B;
             padding: 25px 50px;
+            border: solid 1px #414548;
             border-radius: 10px;
             max-width: 600px;
-            margin: 3% auto;
+            margin: 6% auto;
             box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
         }
 
         .contact-form h2 {
             margin-bottom: 20px;
             text-align: center;
+
         }
 
         .contact-form input,
@@ -90,6 +92,17 @@ if (!isset($_SESSION['nombre_usuario'])) {
 
     <div class="contact-form">
 
+        <!-- Posible añadido -->
+        <!-- <p>
+            Contact Support
+
+            Need assistance? Submit a request below and we will get to work!
+
+            If you think the problem is a bug and you don't find it in system status or known issues, raise it here and we will collect full details to report it to development.
+
+            If you are an Atlassian certified partner, please confirm you are logged in using the account associated with your business email address (your company domain, NOT Atlassian domain, your customer’s domain, or personal email domain).
+        </p> -->
+        
         <h2>Contáctanos</h2>
 
         <?php if (isset($_GET['estado'])): ?>
@@ -97,7 +110,7 @@ if (!isset($_SESSION['nombre_usuario'])) {
             <?php if ($_GET['estado'] === 'ok'): ?>
 
                 <p class="mensaje-confirmacion">¡Envío exitoso! Gracias por contactarnos. Te responderemos pronto.</p>
-                
+
             <?php elseif ($_GET['estado'] === 'error'): ?>
 
                 <p class="mensaje-fallo">Lo sentimos, algo ha fallado. Por favor, inténtalo de nuevo más tarde.</p>

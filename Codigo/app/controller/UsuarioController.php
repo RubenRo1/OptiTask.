@@ -39,6 +39,8 @@ class UsuarioController
         return true;
     }
 
+
+
     // Modificar datos del usuario
     // public function modificarUsuario($nuevoNombre, $nuevoEmail, $nuevaContraseña)
     // {
@@ -75,12 +77,18 @@ class UsuarioController
         }
 
         // Actualizar campos
-        
+
         $usuario->setNombre($nuevoNombre);
         $usuario->setEmail($nuevoEmail);
         $usuario->setContraseña($nuevaContraseña);
-        
+
         $usuario->update();
+    }
+
+    //Comprobar si el email de usuario ya existe
+    public function emailExiste($email)
+    {
+        return Usuario::EmailExiste($email);
     }
 
 

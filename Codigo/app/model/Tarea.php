@@ -123,9 +123,9 @@ class Tarea
     {
         try {
             $conn = getDBConnection();
-            $stmt = $conn->prepare("INSERT INTO tareas (id_usuario, id_categoria, titulo, fecha_creacion, fecha_limite, prioridad, estado, descripcion, tiempo_estimado) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
-            $stmt->execute([$this->id_usuario, $this->id_categoria, $this->titulo, $this->fecha_creacion, $this->fecha_limite, $this->prioridad, $this->estado, $this->descripcion, $this->tiempo_estimado]);
+            $stmt = $conn->prepare("INSERT INTO tarea (id_usuario, id_categoria, titulo, fecha_limite, prioridad, estado, descripcion, tiempo_estimado) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+            $stmt->execute([$this->id_usuario, $this->id_categoria, $this->titulo, $this->fecha_limite, $this->prioridad, $this->estado, $this->descripcion, $this->tiempo_estimado]);
             $this->id_tarea = $conn->lastInsertId();
         } catch (PDOException $e) {
             echo "Error al crear la tarea: " . $e->getMessage();
@@ -168,7 +168,7 @@ class Tarea
     {
         try {
             $conn = getDBConnection();
-            $stmt = $conn->prepare("SELECT * FROM tareas WHERE id_tarea = ?");
+            $stmt = $conn->prepare("SELECT * FROM tarea WHERE id_tarea = ?");
             $stmt->execute([$id_tarea]);
             $result = $stmt->fetch(PDO::FETCH_ASSOC);
             if ($result) {
@@ -191,6 +191,40 @@ class Tarea
             return null;
         }
     }
+    // Obtener tareas por ID de usuario
+    public static function getTareasByUser($id_usuario)
+    {
+        try {
+            $conn = getDBConnection();
+            $stmt = $conn->prepare("SELECT * FROM tarea WHERE id_usuario = ?");
+            $stmt->execute([$id_usuario]);
+            $result = $stmt->fetchAll(PDO::FETCH_ASSOC); // Obtener todas las tareas
+
+            $tareas = [];
+            if ($result) {
+                foreach ($result as $row) {
+                    $tarea = new Tarea();
+                    $tarea->setIdTarea($row['id_tarea']);
+                    $tarea->setIdUsuario($row['id_usuario']);
+                    $tarea->setIdCategoria($row['id_categoria']);
+                    $tarea->setTitulo($row['titulo']);
+                    $tarea->setFechaCreacion($row['fecha_creacion']);
+                    $tarea->setFechaLimite($row['fecha_limite']);
+                    $tarea->setPrioridad($row['prioridad']);
+                    $tarea->setEstado($row['estado']);
+                    $tarea->setDescripcion($row['descripcion']);
+                    $tarea->setTiempoEstimado($row['tiempo_estimado']);
+                    $tareas[] = $tarea; // Añadir tarea al array
+                }
+                return $tareas;
+            }
+            return []; // Si no hay tareas, devolver un array vacío
+        } catch (PDOException $e) {
+            echo "Error al obtener las tareas del usuario: " . $e->getMessage();
+            return [];
+        }
+    }
+
 
     // Actualizar la descripción de la tarea
     public function updateDescripcion($nuevaDescripcion)
@@ -282,7 +316,7 @@ class Tarea
     {
         try {
             $conn = getDBConnection();
-            $stmt = $conn->prepare("UPDATE tareas SET titulo = ?, id_categoria = ?, fecha_limite = ?, prioridad = ?, estado = ?, descripcion = ?, tiempo_estimado = ? WHERE id_tarea = ?");
+            $stmt = $conn->prepare("UPDATE tarea SET titulo = ?, id_categoria = ?, fecha_limite = ?, prioridad = ?, estado = ?, descripcion = ?, tiempo_estimado = ? WHERE id_tarea = ?");
             $stmt->execute([$this->titulo, $this->id_categoria, $this->fecha_limite, $this->prioridad, $this->estado, $this->descripcion, $this->tiempo_estimado, $this->id_tarea]);
         } catch (PDOException $e) {
             echo "Error al actualizar la tarea: " . $e->getMessage();
@@ -294,7 +328,7 @@ class Tarea
     {
         try {
             $conn = getDBConnection();
-            $stmt = $conn->prepare("DELETE FROM tareas WHERE id_tarea = ?");
+            $stmt = $conn->prepare("DELETE FROM tarea WHERE id_tarea = ?");
             $stmt->execute([$this->id_tarea]);
         } catch (PDOException $e) {
             echo "Error al eliminar la tarea: " . $e->getMessage();

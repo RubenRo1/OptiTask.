@@ -211,6 +211,22 @@ class Usuario
         }
     }
 
+    // Verificar si el email ya existe
+    public static function EmailExiste($email)
+    {
+        try {
+            $conn = getDBConnection();
+            $stmt = $conn->prepare("SELECT COUNT(*) FROM usuario WHERE email = ?");
+            $stmt->execute([$email]);
+            $result = $stmt->fetchColumn();
+            return $result > 0; // Si existe, retorna true
+        } catch (PDOException $e) {
+            echo "Error al verificar el email: " . $e->getMessage();
+            return false;
+        }
+    }
+
+
     // Verificar si el nombre de usuario ya existe
     public static function UsuarioExiste($nombre)
     {

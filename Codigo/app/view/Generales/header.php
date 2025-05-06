@@ -2,9 +2,9 @@
     <nav>
         <div class="nav-left">
             <ul>
-                <li><a href="inicio.php" class="Logo"><span>O</span>pti<span>T</span>ask</a></li>
-                <li><a href="inicio.php">Inicio</a></li>
+                <li class="Tamaño"><a href="inicio.php" class="Logo"><span>O</span>pti<span>T</span>ask</a></li>
                 <li><a href="tareas.php">Mis Tareas</a></li>
+                <li><a href="favoritos.php">Favoritos</a></li>
                 <li><a href="contacto.php">Contacto</a></li>
             </ul>
         </div>
@@ -19,30 +19,60 @@
                     </li>
 
                 <?php else: ?>
-                    <li><a href="login.php">Iniciar sesión</a></li>
-                    <li><a href="registro.php">Registrarse</a></li>
+                    <li style="display: flex; align-items: center; justify-content: center;">
+                        <a href="login.php">Iniciar sesión</a>
+                    </li>
+                    <li style="display: flex; align-items: center; justify-content: center;">
+                        <a href="registro.php">Registrarse</a>
+                    </li>
                 <?php endif; ?>
             </ul>
         </div>
     </nav>
+   
 </header>
 
-
 <style>
+
+    .Tamaño {
+        font-size: 30px;
+       
+    }
     html,
     body {
+
         margin: 0;
         padding: 0;
-        overflow-x: hidden;
-        width: 100%;
         height: 100%;
-        box-sizing: border-box;
+        overflow: hidden;
+        background-color: #2B2B2B;
+        color: white;
+    }
+
+    .content {
+        flex-grow: 1;
+        padding-top: 30px;
+        transition: left 0.3s ease;
+        /* transition: margin-left 0.3s ease; */
+        margin-left: 0;
+    }
+
+    .content.sidebar-open {
+
+        position: relative;
+        left: 0px; 
+
     }
 
     header {
-        background-color: #333;
-        color: white;
+
+        position: fixed;
+        top: 0;
+        left: 0;
         width: 100%;
+        z-index: 10;
+        background-color: #2B2B2B;
+        border-bottom: 1px solid #414548;
         padding: 0 20px;
         box-sizing: border-box;
     }
@@ -63,11 +93,12 @@
 
     nav ul li {
         margin-right: 10px;
+        display: flex; align-items: center
     }
 
     nav ul li a {
         text-decoration: none;
-        padding: 10px 15px;
+        padding: 9px 15px;
         color: white;
         display: block;
         border-radius: 10px;
@@ -88,6 +119,4 @@
     .Logo span {
         color: #00C897;
     }
-
-    
 </style>

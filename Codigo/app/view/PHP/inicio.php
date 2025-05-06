@@ -50,22 +50,46 @@ function cerrarSesion()
 </head>
 
 <body>
-    <?php include "../Generales/header.php" ?>
-    <h1>Bienvenido <?php echo htmlspecialchars($nombre_usuario); ?></h1>
+    <?php
+    include "../Generales/header.php";
+    include "../Generales/sidebar.php";
+    ?>
 
-    <?php if ($usuario != null): ?>
-        <p><strong>Correo:</strong> <?php echo htmlspecialchars($usuario->getEmail()); ?></p>
-        <p><strong>Fecha de registro:</strong> <?php echo htmlspecialchars($usuario->getFechaRegistro()); ?></p>
-    <?php else: ?>
-        <p>No hay información de usuario disponible.</p>
-    <?php endif; ?>
+    <div class="content">
+        <div class="hola">
+            <h1>Bienvenido <?php echo htmlspecialchars($nombre_usuario); ?></h1>
 
-    <!-- Enlace para cerrar sesión -->
-    <form method="POST" action="">
-        <button type="submit" name="cerrar_sesion">Cerrar Sesión</button>
-        <button type="submit" name="modificar_cuenta">Cuenta</button>
-    </form>
+            <?php if ($usuario != null): ?>
+                <p><strong>Correo:</strong> <?php echo htmlspecialchars($usuario->getEmail()); ?></p>
+                <p><strong>Fecha de registro:</strong> <?php echo htmlspecialchars($usuario->getFechaRegistro()); ?></p>
+            <?php else: ?>
+                <p>No hay información de usuario disponible.</p>
+            <?php endif; ?>
+
+            <!-- Enlace para cerrar sesión -->
+            <form method="POST" action="">
+                <button type="submit" name="cerrar_sesion">Cerrar Sesión</button>
+                <button type="submit" name="modificar_cuenta">Cuenta</button>
+            </form>
+        </div>
+
+
+
+    </div>
+
+
 
 </body>
+
+<style>
+    .hola{
+
+        margin-left: 250px;
+        padding-top: 20px;
+        color: white;
+        
+    }
+
+</style>
 
 </html>
