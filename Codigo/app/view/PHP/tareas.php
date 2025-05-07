@@ -16,7 +16,25 @@ $usuarioController = new UsuarioController();
 $nombre_usuario = $_SESSION['nombre_usuario'];
 $usuario = $usuarioController->getUserByName($nombre_usuario);
 
+
+if (isset($_POST['titulo'], $_POST['descripcion'], $_POST['fecha_limite'], $_POST['prioridad'], $_POST['estado'], $_POST['tiempo_estimado'])) {
+    $titulo = htmlspecialchars($_POST['titulo']);
+    $descripcion = htmlspecialchars($_POST['descripcion']);
+    $fecha_limite = htmlspecialchars($_POST['fecha_limite']);
+    $prioridad = htmlspecialchars($_POST['prioridad']);
+    $estado = htmlspecialchars($_POST['estado']);
+    $tiempo_estimado = htmlspecialchars($_POST['tiempo_estimado']);
+    // $id_categoria = htmlspecialchars($_POST['id_categoria']);
+    $id_usuario = $usuario->getIdUsuario();
+    $tareaController = new TareaController();
+    $id_tarea = $tareaController->crearTarea($id_usuario, $titulo, $fecha_limite, $prioridad, $estado, $descripcion, $tiempo_estimado);
+    header("Location: detalleTarea.php?id=".$id_tarea);
+    exit
+();
+}
+
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -29,28 +47,29 @@ $usuario = $usuarioController->getUserByName($nombre_usuario);
 
 <body>
     <?php include "../Generales/header.php" ?>
-
     <div class="content">
 
         <form method="POST" action="tareas.php">
+            <label>Titulo</label>
             <input type="text" name="titulo" placeholder="Título" required>
-            <textarea name="descripcion" placeholder="Descripción..."></textarea>
+            <label>Descripción</label>
+            <textarea name="descripcion" placeholder="Añadir una descripción mas detallada..."></textarea>
             <label>Fecha límite:</label>
             <input type="date" name="fecha_limite" required>
             <label>Prioridad:</label>
             <select name="prioridad" required>
                 <option value="alta">Alta</option>
-                <option value="media">Media</option>
+                <option value="media" selected>Media</option>
                 <option value="baja">Baja</option>
             </select>
             <label>Estado:</label>
             <select name="estado" required>
-                <option value="pendiente">Pendiente</option>
-                <option value="en progreso">En progreso</option>
+                <option value="pendiente" selected>Pendiente</option>
+                <option value="en progreso">En Progreso</option>
                 <option value="completada">Completada</option>
             </select>
             <label>Tiempo estimado:</label>
-            <input type="text" name="tiempo_estimado" placeholder="Ej: 2 horas" required>
+            <input type="text" name="tiempo_estimado" placeholder="Tiempo en minutos" required>
             <!-- <label>Categoría:</label> -->
             <!-- <select name="id_categoria" required> -->
             <!--     <option value="1">Trabajo</option> -->
@@ -62,30 +81,16 @@ $usuario = $usuarioController->getUserByName($nombre_usuario);
 
     </div>
 
-
-
-    <?php
-    if (isset($_POST['titulo'], $_POST['descripcion'], $_POST['fecha_limite'], $_POST['prioridad'], $_POST['estado'], $_POST['tiempo_estimado'])) {
-        $titulo = htmlspecialchars($_POST['titulo']);
-        $descripcion = htmlspecialchars($_POST['descripcion']);
-        $fecha_limite = htmlspecialchars($_POST['fecha_limite']);
-        $prioridad = htmlspecialchars($_POST['prioridad']);
-        $estado = htmlspecialchars($_POST['estado']);
-        $tiempo_estimado = htmlspecialchars($_POST['tiempo_estimado']);
-        // $id_categoria = htmlspecialchars($_POST['id_categoria']);
-        $id_usuario = $usuario->getIdUsuario();
-        $tareaController = new TareaController();
-        $tareaController->crearTarea($id_usuario, $titulo, $fecha_limite, $prioridad, $estado, $descripcion, $tiempo_estimado);
-    }
-
-    ?>
 </body>
-    <style>
+<style>
+    form {
 
-        form {
-            
-            margin: 50px auto;
-        }
-    </style>
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        max-width: 400px;
+        margin: 50px auto;
+    }
+</style>
 
 </html>

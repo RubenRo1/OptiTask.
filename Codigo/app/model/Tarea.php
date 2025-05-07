@@ -127,6 +127,9 @@ class Tarea
             VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
             $stmt->execute([$this->id_usuario, $this->id_categoria, $this->titulo, $this->fecha_limite, $this->prioridad, $this->estado, $this->descripcion, $this->tiempo_estimado]);
             $this->id_tarea = $conn->lastInsertId();
+            
+            return $conn->lastInsertId(); // Retorna el ID de la tarea creada AL IGUAL BORRAR SI FALLA
+
         } catch (PDOException $e) {
             echo "Error al crear la tarea: " . $e->getMessage();
         }

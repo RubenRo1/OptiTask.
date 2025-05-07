@@ -56,7 +56,7 @@ function cerrarSesion()
     ?>
 
     <div class="content">
-        <div class="hola">
+        <div class="general">
             <h1>Bienvenido <?php echo htmlspecialchars($nombre_usuario); ?></h1>
 
             <?php if ($usuario != null): ?>
@@ -82,14 +82,12 @@ function cerrarSesion()
 </body>
 
 <style>
-    .hola{
+    .general{
 
-        margin-left: 250px;
-        padding-top: 20px;
-        color: white;
-        
+        margin-left: 100px;
+        margin-top: 2%;
+
     }
-
 </style>
 
 </html>

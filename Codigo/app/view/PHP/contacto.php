@@ -93,7 +93,7 @@ if (!isset($_SESSION['nombre_usuario'])) {
     <div class="contact-form">
 
         <!-- Posible añadido -->
-        <!-- <p>
+      <!-- <p>
             Contact Support
 
             Need assistance? Submit a request below and we will get to work!
@@ -101,7 +101,7 @@ if (!isset($_SESSION['nombre_usuario'])) {
             If you think the problem is a bug and you don't find it in system status or known issues, raise it here and we will collect full details to report it to development.
 
             If you are an Atlassian certified partner, please confirm you are logged in using the account associated with your business email address (your company domain, NOT Atlassian domain, your customer’s domain, or personal email domain).
-        </p> -->
+        </p>  -->
         
         <h2>Contáctanos</h2>
 

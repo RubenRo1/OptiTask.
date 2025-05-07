@@ -23,7 +23,7 @@ function comprobarContraseñaActual($contraseña_actual, $usuario)
     return $contraseña_actual === $usuario->getContraseña();
 }
 
-function cerrarSesion($usuario)
+function cerrarSesion()
 {
     session_destroy();
     header("Location: login.php");
@@ -31,9 +31,9 @@ function cerrarSesion($usuario)
     exit();
 }
 
-function borrarCuenta($usuarioController, $nombre_usuario)
+function borrarCuenta($usuarioController, $id_usuario)
 {
-    $usuarioController->eliminarUsuario($nombre_usuario);
+    $usuarioController->eliminarUsuario($id_usuario);
     session_destroy();
     header("Location: login.php");
 
@@ -71,7 +71,7 @@ if (isset($_POST['borrar_cuenta'])) {
     $contraseña_actual = $_POST['contraseña_actual'];
 
     if (comprobarContraseñaActual($contraseña_actual, $usuario)) {
-        borrarCuenta($usuarioController, $nombre_usuario);
+        borrarCuenta($usuarioController, $usuario->getIdUsuario());
     } else {
         $mensaje_error = "La contraseña actual es incorrecta.";
     }
@@ -79,12 +79,9 @@ if (isset($_POST['borrar_cuenta'])) {
 
 // cerrar sesión
 if (isset($_POST['cerrar_sesion'])) {
-    $contraseña_actual = $_POST['contraseña_actual'];
-    if (comprobarContraseñaActual($contraseña_actual, $usuario)) {
-        cerrarSesion($usuario);
-    } else {
-        $mensaje_error = "La contraseña actual es incorrecta.";
-    }
+    
+    cerrarSesion($usuario);
+
 }
 ?>
 
@@ -122,7 +119,7 @@ if (isset($_POST['cerrar_sesion'])) {
             <br>
             <div>
                 <b>Contraseña actual:</b><br>
-                <input type="password" name="contraseña_actual" required>
+                <input type="password" name="contraseña_actual">
             </div>
 
             <!-- Mostrar el mensaje de error solo si hay uno -->

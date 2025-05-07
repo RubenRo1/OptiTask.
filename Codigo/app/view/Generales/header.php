@@ -3,7 +3,8 @@
         <div class="nav-left">
             <ul>
                 <li class="Tamaño"><a href="inicio.php" class="Logo"><span>O</span>pti<span>T</span>ask</a></li>
-                <li><a href="tareas.php">Mis Tareas</a></li>
+                <li><a href="tareas.php">Crear Tarea</a></li>
+                <li><a href="detalleTarea.php">Mis Tareas</a></li>
                 <li><a href="favoritos.php">Favoritos</a></li>
                 <li><a href="contacto.php">Contacto</a></li>
             </ul>
@@ -53,7 +54,6 @@
         flex-grow: 1;
         padding-top: 30px;
         transition: left 0.3s ease;
-        /* transition: margin-left 0.3s ease; */
         margin-left: 0;
     }
 

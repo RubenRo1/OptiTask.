@@ -31,7 +31,12 @@ class TareaController {
         $nuevaTarea->setTiempoEstimado($tiempo_estimado);
         $nuevaTarea->setIdCategoria($id_categoria);  // Solo si se proporciona
 
-        $nuevaTarea->create();
+       $nuevaTarea->create();
+
+       $id_tarea = $nuevaTarea->getIdTarea(); // Obtener el ID de la tarea recién creada
+       
+       return $id_tarea;
+
     }
 
     // Modificar tarea (cualquier campo)
