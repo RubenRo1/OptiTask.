@@ -1,14 +1,22 @@
 <?php
 require_once(__DIR__ . '/../../../rutas.php');
 require_once(CONTROLLER . 'TareaController.php');
+require_once(CONTROLLER . 'CompartidasController.php');
+require_once(MODEL . 'Compartidas.php');
 require_once(MODEL . 'Tarea.php');
 
 // Obtener las tareas del usuario desde el controlador
 if ((isset($_SESSION['nombre_usuario']))) {
-    $tareaController = new TareaController();
-    $id_usuario = $usuario->getIdUsuario();  // Asegúrate de tener el ID del usuario en la sesión
-    $tareas = $tareaController->getTareasByUser($id_usuario);  // Método que obtiene las tareas de la base de datos
 
+
+
+    $tareaController = new TareaController();
+    $compartidasController = new CompartidasController();
+
+    $id_usuario = $usuario->getIdUsuario();
+
+    $tareas = $tareaController->getTareasByUser($id_usuario);  // Método que obtiene las tareas de la base de datos
+    $tareasCompartidas = $compartidasController->obtenerCompartidasPorUsuarioDestino($id_usuario);
 }
 
 ?>
@@ -59,7 +67,7 @@ if ((isset($_SESSION['nombre_usuario']))) {
             font-size: 18px;
             color: white;
             display: block;
-            border-bottom: 1px solid #414548;
+            /* border-bottom: 1px solid #414548; */
         }
 
         .sidebar a:hover {
@@ -102,12 +110,28 @@ if ((isset($_SESSION['nombre_usuario']))) {
         if (!empty($tareas)) {
             foreach ($tareas as $tarea) {
                 // Cada tarea es un enlace que llevará a una página de detalles o edición de la tarea
-                echo '<a href="detalleTarea.php?id=' . $tarea->getIdTarea() . '">' . htmlspecialchars($tarea->getTitulo()) . '</a>';
+                echo '<div style="display: flex; justify-content: space-between; align-items: center; padding: 5px 10px;border-bottom: 1px solid #414548;">';
+                echo '<a href="detalleTarea.php?id=' . $tarea->getIdTarea() . '" style="color: white; text-decoration: none;">' . htmlspecialchars($tarea->getTitulo()) . '</a>';
+                echo '<a href="compartirTarea.php?id=' . $tarea->getIdTarea() . '" style="background-color: #4CAF50; color: white; padding: 4px 8px; text-decoration: none; border-radius: 4px; font-size: 12px;">Compartir</a>';
+                echo '</div>';
             }
         } else if (!isset($_SESSION['nombre_usuario'])) {
             echo '<p class="texto">No has iniciado sesión</p>';
         } else {
             echo '<p class="texto">No tienes tareas pendientes</p>';
+        }
+        ?>
+        <h2 class="texto">Compartida Conmigo</h2>
+        <?php
+        if (!empty($tareasCompartidas)) {
+            foreach ($tareasCompartidas as $compartida) {
+                $tarea = $tareaController->getTareaById($compartida->getIdTarea());
+                if ($tarea) {
+                    echo '<a href="detalleTarea.php?id=' . $tarea->getIdTarea() . '">' . htmlspecialchars($tarea->getTitulo()) . '</a>';
+                }
+            }
+        } else {
+            echo '<p class="texto">No tienes tareas compartidas</p>';
         }
         ?>
     </div>
@@ -280,19 +304,19 @@ if ((isset($_SESSION['nombre_usuario']))) {
 <body>
     <div class="sidebar open">
         <h2 class="texto">Mis Tareas</h2> -->
-        <?php
-        // if (!empty($tareas)) {
-        //     foreach ($tareas as $tarea) {
-        //         // Cada tarea es un enlace que llevará a una página de detalles o edición de la tarea
-        //         echo '<button class="boton" data-tarea-id="' . $tarea->getIdTarea() . '">' . htmlspecialchars($tarea->getTitulo()) . '</button>';
-        //     }
-        // } else if (!isset($_SESSION['nombre_usuario'])) {
-        //     echo '<p class="texto">No has iniciado sesión</p>';
-        // } else {
-        //     echo '<p class="texto">No tienes tareas pendientes</p>';
-        // }
-        ?>
-    <!-- </div>
+<?php
+// if (!empty($tareas)) {
+//     foreach ($tareas as $tarea) {
+//         // Cada tarea es un enlace que llevará a una página de detalles o edición de la tarea
+//         echo '<button class="boton" data-tarea-id="' . $tarea->getIdTarea() . '">' . htmlspecialchars($tarea->getTitulo()) . '</button>';
+//     }
+// } else if (!isset($_SESSION['nombre_usuario'])) {
+//     echo '<p class="texto">No has iniciado sesión</p>';
+// } else {
+//     echo '<p class="texto">No tienes tareas pendientes</p>';
+// }
+?>
+<!-- </div>
     <button id="botonAbrir">
         ←
     </button>
@@ -330,5 +354,3 @@ if ((isset($_SESSION['nombre_usuario']))) {
 </script>
 
 </html> -->
-
-
