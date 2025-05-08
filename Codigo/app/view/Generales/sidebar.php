@@ -17,6 +17,13 @@ if ((isset($_SESSION['nombre_usuario']))) {
 
     $tareas = $tareaController->getTareasByUser($id_usuario);  // Método que obtiene las tareas de la base de datos
     $tareasCompartidas = $compartidasController->obtenerCompartidasPorUsuarioDestino($id_usuario);
+
+    if (isset($_GET['id'])) {
+        $id_tarea = $_GET['id'];
+        $Tareas = $tareaController->getTareaById($id_tarea);
+    } else {
+        $Tareas = null;
+    }
 }
 
 ?>
@@ -70,12 +77,23 @@ if ((isset($_SESSION['nombre_usuario']))) {
             /* border-bottom: 1px solid #414548; */
         }
 
-        .sidebar a:hover {
+        .contenedor {
+
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 10px;
+            border-bottom: 1px solid #414548;
+        }
+
+        .contenedor:hover {
             background-color: #ddd;
+
         }
 
         .texto {
 
+            font-size: 22px;
             text-align: center;
 
         }
@@ -109,10 +127,10 @@ if ((isset($_SESSION['nombre_usuario']))) {
         <?php
         if (!empty($tareas)) {
             foreach ($tareas as $tarea) {
-                // Cada tarea es un enlace que llevará a una página de detalles o edición de la tarea
-                echo '<div style="display: flex; justify-content: space-between; align-items: center; padding: 5px 10px;border-bottom: 1px solid #414548;">';
-                echo '<a href="detalleTarea.php?id=' . $tarea->getIdTarea() . '" style="color: white; text-decoration: none;">' . htmlspecialchars($tarea->getTitulo()) . '</a>';
-                echo '<a href="compartirTarea.php?id=' . $tarea->getIdTarea() . '" style="background-color: #4CAF50; color: white; padding: 4px 8px; text-decoration: none; border-radius: 4px; font-size: 12px;">Compartir</a>';
+
+                echo '<div class="contenedor" onclick="window.location.href=\'detalleTarea.php?id=' . $tarea->getIdTarea() . '\'" style="cursor:pointer;">';
+                echo htmlspecialchars($tarea->getTitulo());
+                echo '<button onclick="event.stopPropagation(); abrirPopup(' . $tarea->getIdTarea() . ', \'' . addslashes($tarea->getTitulo()) . '\')" style="background-color: #4CAF50; color: white; padding: 4px 8px; border: none; border-radius: 4px; font-size: 12px;">Compartir</button>';
                 echo '</div>';
             }
         } else if (!isset($_SESSION['nombre_usuario'])) {
@@ -125,9 +143,12 @@ if ((isset($_SESSION['nombre_usuario']))) {
         <?php
         if (!empty($tareasCompartidas)) {
             foreach ($tareasCompartidas as $compartida) {
-                $tarea = $tareaController->getTareaById($compartida->getIdTarea());
-                if ($tarea) {
-                    echo '<a href="detalleTarea.php?id=' . $tarea->getIdTarea() . '">' . htmlspecialchars($tarea->getTitulo()) . '</a>';
+                $tareaCompartida = $tareaController->getTareaById($compartida['id_tarea']);
+                if ($tareaCompartida) {
+
+                    echo '<div class="contenedor" onclick="window.location.href=\'detalleTarea.php?id=' . $tareaCompartida->getIdTarea() . '\'" style="cursor:pointer;">';
+                    echo htmlspecialchars($tareaCompartida->getTitulo());
+                    echo '</div>';
                 }
             }
         } else {
@@ -138,6 +159,18 @@ if ((isset($_SESSION['nombre_usuario']))) {
     <button id="botonAbrir">
         ←
     </button>
+
+    <div id="popupCompartir" style="display:none;color: black; position:fixed; top:30%; left:50%; transform:translate(-50%, -50%); background-color:white; padding:20px; border-radius:8px; box-shadow:0 0 10px rgba(0,0,0,0.3); z-index:999;">
+        <h3></h3>
+        <form id="formCompartir">
+            <input type="hidden" name="id_tarea" id="popupIdTarea">
+            <label for="usuario">Nombre del usuario a compartir:</label><br>
+            <input type="text" name="nombre_usuario_destino" id="popupUsuario" required><br><br>
+            <button type="submit">Compartir</button>
+            <button type="button" onclick="cerrarPopup()">Cancelar</button>
+        </form>
+        <div id="resultadoCompartir" style="margin-top: 10px; color: green;"></div>
+    </div>
 </body>
 
 <script>
@@ -158,6 +191,50 @@ if ((isset($_SESSION['nombre_usuario']))) {
                 toggleButton.textContent = "→"; // Cambiar a "+" cuando el sidebar está cerrado
             }
         });
+    });
+
+    function abrirPopup(idTarea, tituloTarea) {
+
+        // Establecemos el valor del campo oculto con el id de la tarea
+        document.getElementById('popupIdTarea').value = idTarea;
+        // Mostramos el popup
+        document.getElementById('popupCompartir').style.display = 'block';
+        // Actualizamos el título del popup con el título de la tarea
+        document.getElementById('popupCompartir').querySelector('h3').textContent = 'Compartir tarea: ' + tituloTarea;
+
+        // Limpiamos el resultado de compartir
+        document.getElementById('resultadoCompartir').textContent = '';
+
+
+    }
+
+    function cerrarPopup() {
+        document.getElementById('popupCompartir').style.display = 'none';
+        document.getElementById('popupFondo').style.display = 'none';
+    }
+
+    document.getElementById('formCompartir').addEventListener('submit', function(e) {
+        e.preventDefault(); // Evita el envío tradicional del formulario
+
+        const idTarea = document.getElementById('popupIdTarea').value;
+        const nombreUsuario = document.getElementById('popupUsuario').value;
+
+        fetch('../Generales/procesarCompartir.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: 'id_tarea=' + encodeURIComponent(idTarea) + '&nombre_usuario_destino=' + encodeURIComponent(nombreUsuario)
+            })
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('resultadoCompartir').textContent = data;
+                setTimeout(() => cerrarPopup(), 1500); // Cierra el popup después de mostrar el mensaje
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('resultadoCompartir').textContent = 'Error al compartir la tarea.';
+            });
     });
 </script>
 

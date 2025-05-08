@@ -10,6 +10,7 @@ class Usuario
     private $email;
     private $contraseña;
     private $fecha_registro;
+    private $imagen;  // Nueva propiedad para la imagen
 
     // Getters
     public function getIdUsuario()
@@ -37,6 +38,12 @@ class Usuario
         return $this->fecha_registro;
     }
 
+    public function getImagen()
+    {
+        return $this->imagen;
+    }
+
+
     // Setters
     public function setIdUsuario($id_usuario)
     {
@@ -63,13 +70,19 @@ class Usuario
         $this->fecha_registro = $fecha_registro;
     }
 
+    public function setImagen($imagen)
+    {
+        $this->imagen = $imagen;
+    }
+
+
     // Crear un nuevo usuario
     public function create()
     {
         try {
             $conn = getDBConnection();
-            $stmt = $conn->prepare("INSERT INTO usuario (nombre, email, contraseña) VALUES (?, ?, ?)");
-            $stmt->execute([$this->nombre, $this->email, $this->contraseña]);
+            $stmt = $conn->prepare("INSERT INTO usuario (nombre, email, contraseña, imagen) VALUES (?, ?, ?, ?)");
+            $stmt->execute([$this->nombre, $this->email, $this->contraseña, $this->imagen]);
             $this->id_usuario = $conn->lastInsertId();
         } catch (PDOException $e) {
             echo "Error al crear el usuario: " . $e->getMessage();
@@ -91,6 +104,7 @@ class Usuario
                 $usuario->setEmail($row['email']);
                 $usuario->setContraseña($row['contraseña']);
                 $usuario->setFechaRegistro($row['fecha_registro']);
+                $usuario->setImagen($row['imagen']); // Asignar la imagen
                 $usuarios[] = $usuario;
             }
 
@@ -117,6 +131,7 @@ class Usuario
                 $usuario->setEmail($result['email']);
                 $usuario->setContraseña($result['contraseña']);
                 $usuario->setFechaRegistro($result['fecha_registro']);
+                $usuario->setImagen($result['imagen']); // Asignar la imagen
                 return $usuario;
             }
             return null;
@@ -142,6 +157,7 @@ class Usuario
                 $usuario->setEmail($result['email']);
                 $usuario->setContraseña($result['contraseña']);
                 $usuario->setFechaRegistro($result['fecha_registro']);
+                $usuario->setImagen($result['imagen']); // Asignar la imagen
                 return $usuario;
             }
             return null;
@@ -165,6 +181,7 @@ class Usuario
                 $usuario->setEmail($result['email']);
                 $usuario->setContraseña($result['contraseña']);
                 $usuario->setFechaRegistro($result['fecha_registro']);
+                $usuario->setImagen($result['imagen']); // Asignar la imagen
                 return $usuario;
             }
             return null;
@@ -204,8 +221,8 @@ class Usuario
     {
         try {
             $conn = getDBConnection();
-            $stmt = $conn->prepare("UPDATE usuario SET nombre = ?, email = ?, contraseña = ? WHERE id_usuario = ?");
-            $stmt->execute([$this->nombre, $this->email, $this->contraseña, $this->id_usuario]);
+            $stmt = $conn->prepare("UPDATE usuario SET nombre = ?, email = ?, contraseña = ?, imagen = ? WHERE id_usuario = ?");
+            $stmt->execute([$this->nombre, $this->email, $this->contraseña, $this->id_usuario , $this->imagen]);
         } catch (PDOException $e) {
             echo "Error al actualizar el usuario: " . $e->getMessage();
         }

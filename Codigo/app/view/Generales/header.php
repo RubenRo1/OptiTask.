@@ -14,7 +14,11 @@
                 <?php if (isset($_SESSION['nombre_usuario'])): ?>
                     <li style="display: flex; align-items: center; gap: 1px;">
 
-                        <img src="../Imagenes/Logo.png" alt="Foto de perfil" style="width: 65px; height: 45px; border-radius: 50%;">
+                        <?php if ($usuario->getImagen() == null): ?>
+                            <img src="../Imagenes/Logo.png" alt="Foto de perfil" style="width: 65px; height: 45px; border-radius: 50%;">
+                        <?php else: ?>
+                            <img src="<?= htmlspecialchars($usuario->getImagen()) ?>" alt="Foto de perfil" style="width: 65px; height: 45px; border-radius: 50%;">
+                        <?php endif; ?>
                         <a href="cuenta.php"><?= htmlspecialchars($_SESSION['nombre_usuario']) ?></a>
 
                     </li>
@@ -30,15 +34,15 @@
             </ul>
         </div>
     </nav>
-   
+
 </header>
 
 <style>
-
     .Tamaño {
         font-size: 30px;
-       
+
     }
+
     html,
     body {
 
@@ -48,6 +52,7 @@
         overflow: hidden;
         background-color: #2B2B2B;
         color: white;
+        font-family:comfortaa, sans-serif;
     }
 
     .content {
@@ -60,7 +65,7 @@
     .content.sidebar-open {
 
         position: relative;
-        left: 0px; 
+        left: 0px;
 
     }
 
@@ -93,7 +98,8 @@
 
     nav ul li {
         margin-right: 10px;
-        display: flex; align-items: center
+        display: flex;
+        align-items: center
     }
 
     nav ul li a {

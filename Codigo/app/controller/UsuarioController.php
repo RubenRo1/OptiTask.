@@ -34,6 +34,7 @@ class UsuarioController
         $nuevoUsuario->setNombre($nombre);
         $nuevoUsuario->setEmail($email);
         $nuevoUsuario->setContraseña($contraseña);
+
         $nuevoUsuario->create();
 
         return true;
@@ -60,7 +61,7 @@ class UsuarioController
 
     // }
 
-    public function modificarUsuario($id_usuario, $nuevoNombre, $nuevoEmail, $nuevaContraseña)
+    public function modificarUsuario($id_usuario, $nuevoNombre, $nuevoEmail, $nuevaContraseña, $imagen = null)
     {
         // Obtener el usuario actual desde la base de datos
         $usuario = Usuario::getUserById($id_usuario);
@@ -81,6 +82,7 @@ class UsuarioController
         $usuario->setNombre($nuevoNombre);
         $usuario->setEmail($nuevoEmail);
         $usuario->setContraseña($nuevaContraseña);
+        $usuario->setImagen($imagen); // Si se proporciona una nueva imagen
 
         $usuario->update();
     }
@@ -129,6 +131,16 @@ class UsuarioController
         $usuario = Usuario::getUserById($id_usuario);
         if ($usuario) {
             $usuario->updatePassword($nuevaContraseña);
+        }
+    }
+
+    // Modificar la imagen del usuario
+    public function modificarImagen($id_usuario, $nuevaImagen)
+    {
+        $usuario = Usuario::getUserById($id_usuario);
+        if ($usuario) {
+            $usuario->setImagen($nuevaImagen);
+            $usuario->update();
         }
     }
 }
