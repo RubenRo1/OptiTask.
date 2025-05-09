@@ -51,7 +51,7 @@ if (isset($_POST['titulo'], $_POST['descripcion'], $_POST['fecha_limite'], $_POS
 
         <form method="POST" action="tareas.php">
             <label>Titulo</label>
-            <input type="text" name="titulo" placeholder="Título" required>
+            <input type="text" name="titulo" placeholder="Título" required maxlength="30">
             <label>Descripción</label>
             <textarea name="descripcion" placeholder="Añadir una descripción mas detallada..."></textarea>
             <label>Fecha límite:</label>

@@ -47,7 +47,13 @@ if ((isset($_SESSION['nombre_usuario']))) {
             border-right: 1px solid #414548;
             z-index: 5;
             transition: left 0.3s ease-in-out;
+            overflow-y: auto;
 
+        }
+
+        .sidebar::-webkit-scrollbar {
+            display: none;
+            /* Esto oculta la barra de desplazamiento */
         }
 
 
@@ -83,12 +89,20 @@ if ((isset($_SESSION['nombre_usuario']))) {
             justify-content: space-between;
             align-items: center;
             padding: 15px 10px;
+            height: 20px;
             border-bottom: 1px solid #414548;
+            letter-spacing: 1px;
+            word-wrap: break-word;
+
         }
 
         .contenedor:hover {
             background-color: #ddd;
 
+        }
+
+        .contenedor:hover .boton-compartir {
+            display: inline-block;
         }
 
         .texto {
@@ -101,7 +115,6 @@ if ((isset($_SESSION['nombre_usuario']))) {
         #botonAbrir {
             position: fixed;
             left: 0;
-            /* Posición inicial a la izquierda de la página */
             top: 50%;
             transform: translateY(-50%);
             padding: 10px 15px;
@@ -112,11 +125,87 @@ if ((isset($_SESSION['nombre_usuario']))) {
             color: white;
             font-size: 22px;
             transition: left 0.3s ease-in-out;
-            /* Transición suave para el movimiento */
+        }
+
+        .boton-compartir {
+            display: none;
+            background-color: #4CAF50;
+            color: white;
+            padding: 4px 7px;
+            border: none;
+            border-radius: 4px;
+            font-size: 12px;
         }
 
         .sidebar.open+#botonAbrir {
             left: 240px;
+        }
+
+        #popupCompartir {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #2b2b2b;
+            padding: 25px 30px;
+            border-radius: 10px;
+            z-index: 999;
+            width: 320px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
+            color: white;
+            text-align: center;
+            font-family: Arial, sans-serif;
+        }
+
+        #popupCompartir h3 {
+            margin-bottom: 15px;
+            font-size: 20px;
+            color: #ffffff;
+        }
+
+        #popupCompartir input[type="text"] {
+            width: 90%;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 6px;
+            border: 1px solid #888;
+            background-color: #1f1f1f;
+            color: white;
+        }
+
+        #popupCompartir button {
+            margin: 5px;
+            padding: 8px 15px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
+
+        #popupCompartir button[type="submit"] {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        #popupCompartir button[type="submit"]:hover {
+            background-color: #45a049;
+        }
+
+        #popupCompartir button[type="button"] {
+            background-color: #777;
+            color: white;
+        }
+
+        #popupCompartir button[type="button"]:hover {
+            background-color: #999;
+        }
+
+        #resultadoCompartir {
+            margin-top: 10px;
+            font-size: 14px;
+            color: #80ff80;
         }
     </style>
 </head>
@@ -129,8 +218,8 @@ if ((isset($_SESSION['nombre_usuario']))) {
             foreach ($tareas as $tarea) {
 
                 echo '<div class="contenedor" onclick="window.location.href=\'detalleTarea.php?id=' . $tarea->getIdTarea() . '\'" style="cursor:pointer;">';
-                echo htmlspecialchars($tarea->getTitulo());
-                echo '<button onclick="event.stopPropagation(); abrirPopup(' . $tarea->getIdTarea() . ', \'' . addslashes($tarea->getTitulo()) . '\')" style="background-color: #4CAF50; color: white; padding: 4px 8px; border: none; border-radius: 4px; font-size: 12px;">Compartir</button>';
+                echo '<span style="display:block; max-width:150px; word-break:break-word;">' . htmlspecialchars($tarea->getTitulo()) . '</span>';
+                echo '<button class="boton-compartir" onclick="event.stopPropagation(); abrirPopup(' . $tarea->getIdTarea() . ', \'' . addslashes($tarea->getTitulo()) . '\')">Compartir</button>';
                 echo '</div>';
             }
         } else if (!isset($_SESSION['nombre_usuario'])) {
@@ -147,7 +236,7 @@ if ((isset($_SESSION['nombre_usuario']))) {
                 if ($tareaCompartida) {
 
                     echo '<div class="contenedor" onclick="window.location.href=\'detalleTarea.php?id=' . $tareaCompartida->getIdTarea() . '\'" style="cursor:pointer;">';
-                    echo htmlspecialchars($tareaCompartida->getTitulo());
+                    echo '<span style="display:block; max-width:150px; word-break:break-word;">' . htmlspecialchars($tareaCompartida->getTitulo()) . '</span>';
                     echo '</div>';
                 }
             }
@@ -160,7 +249,7 @@ if ((isset($_SESSION['nombre_usuario']))) {
         ←
     </button>
 
-    <div id="popupCompartir" style="display:none;color: black; position:fixed; top:30%; left:50%; transform:translate(-50%, -50%); background-color:white; padding:20px; border-radius:8px; box-shadow:0 0 10px rgba(0,0,0,0.3); z-index:999;">
+    <div id="popupCompartir">
         <h3></h3>
         <form id="formCompartir">
             <input type="hidden" name="id_tarea" id="popupIdTarea">
@@ -171,6 +260,17 @@ if ((isset($_SESSION['nombre_usuario']))) {
         </form>
         <div id="resultadoCompartir" style="margin-top: 10px; color: green;"></div>
     </div>
+
+    <div id="popupFondo" style="
+    display:none;
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background-color:rgba(0,0,0,0.5); 
+    z-index:998;"></div>
+
 </body>
 
 <script>
@@ -194,23 +294,19 @@ if ((isset($_SESSION['nombre_usuario']))) {
     });
 
     function abrirPopup(idTarea, tituloTarea) {
-
-        // Establecemos el valor del campo oculto con el id de la tarea
         document.getElementById('popupIdTarea').value = idTarea;
-        // Mostramos el popup
         document.getElementById('popupCompartir').style.display = 'block';
-        // Actualizamos el título del popup con el título de la tarea
+        document.getElementById('popupFondo').style.display = 'block'; // Mostrar fondo
         document.getElementById('popupCompartir').querySelector('h3').textContent = 'Compartir tarea: ' + tituloTarea;
-
-        // Limpiamos el resultado de compartir
         document.getElementById('resultadoCompartir').textContent = '';
-
-
     }
+
 
     function cerrarPopup() {
         document.getElementById('popupCompartir').style.display = 'none';
         document.getElementById('popupFondo').style.display = 'none';
+        document.getElementById('resultadoCompartir').textContent = ''; // Limpiar mensaje de resultado
+
     }
 
     document.getElementById('formCompartir').addEventListener('submit', function(e) {
