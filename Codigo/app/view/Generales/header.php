@@ -9,20 +9,23 @@
                 <li><a href="contacto.php">Contacto</a></li>
             </ul>
         </div>
+
         <div class="nav-right">
             <ul>
                 <?php if (isset($_SESSION['nombre_usuario'])): ?>
-                    <li style="display: flex; align-items: center; gap: 1px;">
+                    <li style="display: flex; align-items: center; gap: 10px; height: 50px; overflow: hidden;">
+                        <a href="cuenta.php" style="display: flex; align-items: center; padding: 5px 10px; border-radius: 10px; transition: background-color 0.3s, box-shadow 0.3s;">
+                            <?php if ($usuario->getImagen() == null): ?>
 
-                        <?php if ($usuario->getImagen() == null): ?>
-                            <img src="../Imagenes/Logo.png" alt="Foto de perfil" style="width: 65px; height: 45px; border-radius: 50%;">
-                        <?php else: ?>
-                            <img src="<?= htmlspecialchars($usuario->getImagen()) ?>" alt="Foto de perfil" style="width: 65px; height: 45px; border-radius: 50%;">
-                        <?php endif; ?>
-                        <a href="cuenta.php"><?= htmlspecialchars($_SESSION['nombre_usuario']) ?></a>
+                                <img src="../Imagenes/Logo2.png" alt="Foto de perfil" style="width: 60px; height: 50px; border-radius: 50%; display: block;">
 
+                            <?php else: ?>
+
+                                <img src="<?= htmlspecialchars($usuario->getImagen()) ?>" alt="Foto de perfil" style="width: 60px; height: 50px; border-radius: 50%; display: block;">
+                            <?php endif; ?>
+                            <span style="line-height: 45px; margin-left: 10px;"><?= htmlspecialchars($_SESSION['nombre_usuario']) ?></span>
+                        </a>
                     </li>
-
                 <?php else: ?>
                     <li style="display: flex; align-items: center; justify-content: center;">
                         <a href="login.php">Iniciar sesión</a>
@@ -52,7 +55,7 @@
         overflow: hidden;
         background-color: #2B2B2B;
         color: white;
-        font-family:comfortaa, sans-serif;
+        font-family: comfortaa, sans-serif;
     }
 
     .content {

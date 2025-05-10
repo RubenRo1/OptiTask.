@@ -71,10 +71,8 @@ class UsuarioController
         }
 
         // Si el nuevo nombre ya existe y no es el mismo que el actual, no permitir
-        if (Usuario::UsuarioExiste($nuevoNombre)) {
-
-            return false; // Nombre de usuario ya en uso
-
+        if (Usuario::UsuarioExiste($nuevoNombre) && $nuevoNombre !== $usuario->getNombre()) {
+            return false; // El nombre está en uso por otro usuario
         }
 
         // Actualizar campos
