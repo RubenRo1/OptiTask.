@@ -84,7 +84,7 @@ function cerrarSesion()
 <style>
     .general{
 
-        margin-left: 100px;
+        margin-left: 250px;
         margin-top: 2%;
 
     }

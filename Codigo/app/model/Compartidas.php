@@ -126,13 +126,38 @@ class Compartidas
     }
 
     // Obtener historial de una tarea
+    // public static function getByTarea($id_tarea)
+    // {
+    //     try {
+    //         $conn = getDBConnection();
+    //         $stmt = $conn->prepare("SELECT * FROM compartidas WHERE id_tarea = ? ORDER BY fecha_compartida DESC");
+    //         $stmt->execute([$id_tarea]);
+    //         return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    //     } catch (PDOException $e) {
+    //         echo "Error al obtener historial: " . $e->getMessage();
+    //         return [];
+    //     }
+    // }
+
     public static function getByTarea($id_tarea)
     {
         try {
             $conn = getDBConnection();
             $stmt = $conn->prepare("SELECT * FROM compartidas WHERE id_tarea = ? ORDER BY fecha_compartida DESC");
             $stmt->execute([$id_tarea]);
-            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            $compartidas = [];
+            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                $compartida = new Compartidas();
+                $compartida->setIdCompartidas($row['id_compartidas']);
+                $compartida->setIdTarea($row['id_tarea']);
+                $compartida->setUsuario_Origen($row['id_usuario_origen']);
+                $compartida->setUsuario_Destino($row['id_usuario_destino']);
+                $compartida->setFechaCompartida($row['fecha_compartida']);
+                $compartidas[] = $compartida;
+            }
+
+            return $compartidas;
         } catch (PDOException $e) {
             echo "Error al obtener historial: " . $e->getMessage();
             return [];

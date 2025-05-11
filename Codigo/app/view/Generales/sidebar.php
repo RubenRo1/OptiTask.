@@ -53,18 +53,17 @@ if ((isset($_SESSION['nombre_usuario']))) {
 
         .sidebar::-webkit-scrollbar {
             display: none;
-            /* Esto oculta la barra de desplazamiento */
+
         }
 
 
 
         .content {
             position: relative;
-            left: 240px;
             flex-grow: 1;
             padding-top: 30px;
             transition: left 0.3s ease in-out;
-            left: 240;
+            /* left: 240; */
         }
 
 
@@ -251,7 +250,7 @@ if ((isset($_SESSION['nombre_usuario']))) {
 
     <div id="popupCompartir">
         <h3></h3>
-        <form id="formCompartir">
+        <form id="formCompartir" onsubmit="refrescarPagina(event)">
             <input type="hidden" name="id_tarea" id="popupIdTarea">
             <label for="usuario">Nombre del usuario a compartir:</label><br>
             <input type="text" name="nombre_usuario_destino" id="popupUsuario" required><br><br>
@@ -301,12 +300,10 @@ if ((isset($_SESSION['nombre_usuario']))) {
         document.getElementById('resultadoCompartir').textContent = '';
     }
 
-
     function cerrarPopup() {
         document.getElementById('popupCompartir').style.display = 'none';
         document.getElementById('popupFondo').style.display = 'none';
         document.getElementById('resultadoCompartir').textContent = ''; // Limpiar mensaje de resultado
-
     }
 
     document.getElementById('formCompartir').addEventListener('submit', function(e) {
@@ -332,7 +329,22 @@ if ((isset($_SESSION['nombre_usuario']))) {
                 document.getElementById('resultadoCompartir').textContent = 'Error al compartir la tarea.';
             });
     });
+
+    function refrescarPagina(event) {
+        event.preventDefault(); // Evita que el formulario se envíe de la manera tradicional
+        const form = document.getElementById('formCompartir');
+        const idTarea = document.getElementById('popupIdTarea').value;
+
+        // Si estamos en la misma página (detalleTarea.php), hacemos un "f5"
+        if (window.location.pathname === '/detalleTarea.php') {
+            location.reload(); // Realiza un "f5" para actualizar la página sin redirigir
+        } else {
+            // Si no estamos en detalleTarea.php, redirigimos con el parámetro en la URL
+            window.location.href = 'detalleTarea.php?id=' + encodeURIComponent(idTarea);
+        }
+    }
 </script>
+
 
 </html>
 
