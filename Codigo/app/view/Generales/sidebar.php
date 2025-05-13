@@ -35,6 +35,7 @@ if ((isset($_SESSION['nombre_usuario']))) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mis Tareas</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <style>
         .sidebar {
             width: 240px;
@@ -83,17 +84,33 @@ if ((isset($_SESSION['nombre_usuario']))) {
         }
 
         .contenedor {
-
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 15px 10px;
-            height: 20px;
             border-bottom: 1px solid #414548;
-            letter-spacing: 1px;
-            word-wrap: break-word;
-
+            min-height: 50px;
+            /* Altura fija para el contenedor */
+            box-sizing: border-box;
+            /* Incluye padding en la altura total */
         }
+
+        .titulo-tarea {
+            flex-grow: 1;
+            max-width: 150px;
+            word-break: break-word;
+            min-height: 20px;
+            /* Altura fija para evitar desplazamientos */
+            line-height: 20px;
+            /* Centrar verticalmente el texto */
+        }
+
+        .contenedor-botones {
+            display: flex;
+            gap: 5px;
+            /* Espacio entre botones */
+        }
+
 
         .contenedor:hover {
             background-color: #ddd;
@@ -123,21 +140,69 @@ if ((isset($_SESSION['nombre_usuario']))) {
             border: none;
             color: white;
             font-size: 22px;
-            transition: left 0.3s ease-in-out;
+            transition: left 0.3s ease-in-out, transform 0.3s ease-in-out;
         }
 
+        /* Estilo para ambos botones */
+        .boton-eliminar,
         .boton-compartir {
             display: none;
-            background-color: #4CAF50;
-            color: white;
-            padding: 4px 7px;
+            background: none;
             border: none;
-            border-radius: 4px;
-            font-size: 12px;
+            cursor: pointer;
+            font-size: 14px;
+            padding: 4px 6px;
+            border-radius: 3px;
+            transition: all 0.2s;
+            height: 24px;
+            /* Altura fija para los botones */
+            width: 24px;
+            /* Ancho fijo para los botones */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .boton-eliminar,
+        .boton-compartir {
+            display: none;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            padding: 4px 6px;
+            border-radius: 3px;
+            transition: all 0.2s;
+        }
+
+        .boton-eliminar {
+            color: #e74c3c;
+        }
+
+        .boton-eliminar:hover {
+            color: #c0392b;
+            background: rgba(231, 76, 60, 0.1);
+        }
+
+        /* Estilo específico para compartir */
+        .boton-compartir {
+            color: #2ecc71;
+        }
+
+        .contenedor:hover .boton-eliminar,
+        .contenedor:hover .boton-compartir {
+            display: inline-block;
+        }
+
+        .boton-compartir:hover {
+            color: #27ae60;
+            background: rgba(46, 204, 113, 0.1);
         }
 
         .sidebar.open+#botonAbrir {
             left: 240px;
+            transform: rotate(180deg);
+            /* Rota el botón */
         }
 
         #popupCompartir {
@@ -206,6 +271,8 @@ if ((isset($_SESSION['nombre_usuario']))) {
             font-size: 14px;
             color: #80ff80;
         }
+
+        /* Mostrar al hacer hover en el contenedor */
     </style>
 </head>
 
@@ -215,10 +282,12 @@ if ((isset($_SESSION['nombre_usuario']))) {
         <?php
         if (!empty($tareas)) {
             foreach ($tareas as $tarea) {
-
                 echo '<div class="contenedor" onclick="window.location.href=\'detalleTarea.php?id=' . $tarea->getIdTarea() . '\'" style="cursor:pointer;">';
-                echo '<span style="display:block; max-width:150px; word-break:break-word;">' . htmlspecialchars($tarea->getTitulo()) . '</span>';
-                echo '<button class="boton-compartir" onclick="event.stopPropagation(); abrirPopup(' . $tarea->getIdTarea() . ', \'' . addslashes($tarea->getTitulo()) . '\')">Compartir</button>';
+                echo '<span class="titulo-tarea">' . htmlspecialchars($tarea->getTitulo()) . '</span>';
+                echo '<div class="contenedor-botones">'; // Nuevo contenedor para los botones
+                echo '<button class="boton-eliminar" onclick="event.stopPropagation(); eliminarTarea(' . $tarea->getIdTarea() . ')"><i class="fas fa-times"></i></button>';
+                echo '<button class="boton-compartir" onclick="event.stopPropagation(); abrirPopup(' . $tarea->getIdTarea() . ', \'' . addslashes($tarea->getTitulo()) . '\')"><i class="fas fa-share-alt"></i></button>';
+                echo '</div>';
                 echo '</div>';
             }
         } else if (!isset($_SESSION['nombre_usuario'])) {
@@ -343,199 +412,29 @@ if ((isset($_SESSION['nombre_usuario']))) {
             window.location.href = 'detalleTarea.php?id=' + encodeURIComponent(idTarea);
         }
     }
-</script>
 
+    function eliminarTarea(idTarea) {
+        if (confirm('¿Estás seguro de que deseas eliminar esta tarea?')) {
+            fetch('../Generales/eliminarTarea.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: 'id_tarea=' + encodeURIComponent(idTarea)
+                })
+                .then(response => response.text())
+                .then(data => {
+                    alert(data);
+                    // Recargar la página para ver los cambios
+                    location.reload(); // <-- Esta es la solución más simple
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error al eliminar la tarea');
+                });
+        }
+    }
+</script>
+<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<!-- Respaldo por si acaso -->
-
-
-
-<?php
-// require_once(__DIR__ . '/../../../rutas.php');
-// require_once(CONTROLLER . 'TareaController.php');
-// require_once(MODEL . 'Tarea.php');
-
-// // Obtener las tareas del usuario desde el controlador
-// if ((isset($_SESSION['nombre_usuario']))) {
-//     $tareaController = new TareaController();
-//     $id_usuario = $usuario->getIdUsuario();  // Asegúrate de tener el ID del usuario en la sesión
-//     $tareas = $tareaController->getTareasByUser($id_usuario);  // Método que obtiene las tareas de la base de datos
-
-// }
-
-?>
-
-<!-- <!DOCTYPE html>
-<html lang="es">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mis Tareas</title>
-    <style>
-        .sidebar {
-            width: 240px;
-            height: 100%;
-            position: absolute;
-            top: 47px;
-            left: -240px;
-            background-color: #2B2B2B;
-            padding-top: 20px;
-            border-right: 1px solid #414548;
-            z-index: 5;
-            transition: left 0.3s ease-in-out;
-
-        }
-
-
-
-        .content {
-            position: relative;
-            left: 240px;
-            flex-grow: 1;
-            padding-top: 30px;
-            transition: left 0.3s ease in-out;
-            /* transition: margin-left 0.3s ease; */
-            left: 240;
-        }
-
-
-
-        .sidebar.open {
-            left: 0;
-            /* Cuando se activa, se mueve a la izquierda */
-        }
-
-        .boton {
-            padding: 10px;
-            width: 100%;
-            border: none;
-            background-color: #2B2B2B;
-            text-align: left;
-            font-size: 17px;
-            color: white;
-            display: block;
-            border-bottom: 1px solid #414548;
-        }
-
-        .sidebar button:hover {
-            background-color: #ddd;
-        }
-
-        .texto {
-
-            text-align: center;
-
-        }
-
-        #botonAbrir {
-            position: fixed;
-            left: 0;
-            /* Posición inicial a la izquierda de la página */
-            top: 50%;
-            transform: translateY(-50%);
-            padding: 10px 15px;
-            cursor: pointer;
-            z-index: 1100;
-            background: none;
-            border: none;
-            color: white;
-            font-size: 22px;
-            transition: left 0.3s ease-in-out;
-            /* Transición suave para el movimiento */
-        }
-
-        .sidebar.open+#botonAbrir {
-            left: 240px;
-        }
-    </style>
-</head>
-
-<body>
-    <div class="sidebar open">
-        <h2 class="texto">Mis Tareas</h2> -->
-<?php
-// if (!empty($tareas)) {
-//     foreach ($tareas as $tarea) {
-//         // Cada tarea es un enlace que llevará a una página de detalles o edición de la tarea
-//         echo '<button class="boton" data-tarea-id="' . $tarea->getIdTarea() . '">' . htmlspecialchars($tarea->getTitulo()) . '</button>';
-//     }
-// } else if (!isset($_SESSION['nombre_usuario'])) {
-//     echo '<p class="texto">No has iniciado sesión</p>';
-// } else {
-//     echo '<p class="texto">No tienes tareas pendientes</p>';
-// }
-?>
-<!-- </div>
-    <button id="botonAbrir">
-        ←
-    </button>
-</body> -->
-
-<!-- <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        // Obtener el botón de toggle y la barra lateral
-        const toggleButton = document.getElementById("botonAbrir");
-        const sidebar = document.querySelector(".sidebar");
-        const mainContent = document.querySelector(".content");
-
-        // Agregar un evento de clic al botón para alternar la clase "open" en la barra lateral
-        toggleButton.addEventListener("click", () => {
-            sidebar.classList.toggle("open"); // Alterna la visibilidad de la barra lateral
-            mainContent.classList.toggle("sidebar-open"); // Alterna el estado del contenido principal (si aplica)
-
-            if (sidebar.classList.contains("open")) {
-                toggleButton.textContent = "←"; // Cambiar a "-" cuando el sidebar está abierto
-            } else {
-                toggleButton.textContent = "→"; // Cambiar a "+" cuando el sidebar está cerrado
-            }
-        });
-    });
-
-
-    const tareaButtons = document.querySelectorAll('.yboton');
-    tareaButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            const tareaId = this.getAttribute('data-tarea-id');
-            // Redirigir a la página de detalle de la tarea
-            window.location.href = 'detalleTarea.php?id=' + tareaId;
-        });
-    });
-</script>
-
-</html> -->

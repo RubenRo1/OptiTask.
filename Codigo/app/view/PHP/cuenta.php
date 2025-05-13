@@ -361,15 +361,22 @@ if (isset($_POST['cerrar_sesion'])) {
     }
 
     .imagen-perfil-container {
-        margin-top: 5%;
+        margin-top: 20px;
         text-align: center;
     }
 
-    .imagen {
+    .imagen-perfil-container img.imagen {
+        width: 150px;
+        height: 150px;
+        object-fit: cover;
         border-radius: 50%;
-        display: inline-block;
-        max-width: 100%;
-        height: auto;
+        border: 3px solid #3A7BFF;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        transition: transform 0.3s ease;
+    }
+
+    .imagen-perfil-container img.imagen:hover {
+        transform: scale(1.05);
     }
 </style>
 

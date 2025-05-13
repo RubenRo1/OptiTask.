@@ -13,15 +13,15 @@ require_once(MODEL . 'Comentario.php');
 session_start();
 
 if (!isset($_SESSION['nombre_usuario'])) {
-
     $usuario = null;
     $nombre_usuario = null;
 } else {
-
     $usuarioController = new UsuarioController();
     $nombre_usuario = $_SESSION['nombre_usuario'];
     $usuario = $usuarioController->getUserByName($nombre_usuario);
 }
+
+$cont = 0; // Variable para verificar si la tarea existe
 
 if (isset($_GET['id']) && !empty($_GET['id'])) {
     $tareaId = $_GET['id'];
@@ -30,33 +30,29 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
     $tareaController = new TareaController();
     $Tareas = $tareaController->getTareaById($tareaId); // Asumimos que este método existe en tu controlador
 
-    $compartidasController = new CompartidasController();
-
-    $usuariosCompartidos = [];
-
-
-    if ($Tareas && $Tareas->getIdUsuario() == $usuario->getIdUsuario()) {
-        $compartidas = Compartidas::getByTarea($tareaId);
+    // Verificar si la tarea existe
+    if ($Tareas === null) {
+        // Si la tarea no existe, establecer $cont = 1
+        $cont = 1;
+    } else {
+        // Si la tarea existe, continuar con la lógica
+        $compartidasController = new CompartidasController();
         $usuariosCompartidos = [];
 
-        foreach ($compartidas as $compartida) {
-            $usuarioDestino = $usuarioController->getUserById($compartida->getUsuario_Destino());
-            if ($usuarioDestino) {
-                $usuariosCompartidos[] = $usuarioDestino->getNombre();
+        if ($Tareas && $Tareas->getIdUsuario() == $usuario->getIdUsuario()) {
+            $compartidas = Compartidas::getByTarea($tareaId);
+            foreach ($compartidas as $compartida) {
+                $usuarioDestino = $usuarioController->getUserById($compartida->getUsuario_Destino());
+                if ($usuarioDestino) {
+                    $usuariosCompartidos[] = $usuarioDestino->getNombre();
+                }
             }
         }
     }
-
-
-    $cont = 0;
 } else {
     // Si no se pasa el ID, redirigir o mostrar un error
-    $cont = 1;
+    $cont = 1;  // Establecer $cont = 1 si no se pasa el ID
 }
-
-
-
-
 
 ?>
 
@@ -71,31 +67,26 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
 </head>
 
 <body>
-    <?php
-    include "../Generales/header.php";
-    ?>
+    <?php include "../Generales/header.php"; ?>
     <?php include "../Generales/sidebar.php"; ?>
 
-    <?php if ($cont == 1) : ?>
+    <?php if ($cont == 1 || $Tareas === null) : ?>
         <div class="content general">
-            <h3>Aqui veras la informacion de la tarea.</h2>
+            <h3>Aqui veras la informacion de la tarea.</h3>
         </div>
     <?php else: ?>
         <div class="content">
             <div class="content-tareas">
-                <!-- <div class="general"> -->
                 <div class="tarea-detalle">
                     <h2><?php echo htmlspecialchars($Tareas->getTitulo()); ?></h2>
-                    <p><?php echo htmlspecialchars($Tareas->getDescripcion()); ?></p>
+                    <p><?php echo nl2br(str_replace(" ", "&nbsp;", htmlspecialchars($Tareas->getDescripcion()))); ?></p>
                     <p><strong>Fecha de entrega:</strong> <?php echo htmlspecialchars($Tareas->getFechaLimite()); ?></p>
                     <p><strong>Estado:</strong> <?php echo htmlspecialchars($Tareas->getEstado()); ?></p>
 
                     <?php if (!empty($usuariosCompartidos)) : ?>
-                        <!-- Icono de las personas compartidas -->
                         <div class="compartida-icon" id="compartida-icon">
                             <i class="fas fa-users"></i>
                         </div>
-                        <!-- Ventana emergente (tooltip) de usuarios compartidos -->
                         <div class="tooltip" id="tooltip">
                             <h4>Compartida con:</h4>
                             <ul>
@@ -107,36 +98,23 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
                     <?php endif; ?>
                 </div>
 
-
-                <!-- </div> -->
-                <!-- Sección de comentarios (Chat) -->
                 <div class="comentarios-chat">
                     <h3>Comentarios</h3>
                     <div class="comentarios-lista">
-
                         <?php
                         $comentarioController = new ComentarioController();
                         $comentarios = $comentarioController->getComentariosByTarea($tareaId);
-                        // Asegúrate de tener el controlador de usuarios
-                        // $usuarioController = new UsuarioController();
                         if (empty($comentarios)) {
                             echo "<div style='text-align: center;'>
-                                <i class='fas fa-comment-slash' style='font-size: 2rem; color: #bdc3c7;'></i>
-                                <p style='color: #bdc3c7;'>No hay comentarios aún.</p>
-                                <p style='color: #bdc3c7;'>¡Sé el primero en comentar!</p>
-                                </div>";
+                            <i class='fas fa-comment-slash' style='font-size: 2rem; color: #bdc3c7;'></i>
+                            <p style='color: #bdc3c7;'>No hay comentarios aún.</p>
+                            <p style='color: #bdc3c7;'>¡Sé el primero en comentar!</p>
+                            </div>";
                         } else {
-
                             foreach ($comentarios as $comentario) {
-                                // Obtener el usuario correspondiente al id_usuario
                                 $usuarioComentario = $usuarioController->getUserById($comentario['id_usuario']);
-                                if ($usuarioComentario) {
-                                    $nombreUsuario = $usuarioComentario->getNombre();
-                                } else {
-                                    $nombreUsuario = "Usuario desconocido";
-                                }
+                                $nombreUsuario = $usuarioComentario ? $usuarioComentario->getNombre() : "Usuario desconocido";
                                 echo "<div class='comentario'>";
-                                // Mostrar la fecha del comentario
                                 echo "<span class='comentario-fecha'>" . htmlspecialchars($comentario['fecha_comentario']) . "</span>";
                                 echo "<strong style='display: inline;'>" . htmlspecialchars($nombreUsuario) . ": </strong>" . htmlspecialchars($comentario['contenido']);
                                 echo "</div>";
@@ -144,7 +122,6 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
                         }
                         ?>
                     </div>
-                    <!-- Formulario para agregar un nuevo comentario -->
                     <form method="POST" action="agregar_comentario.php">
                         <input type="hidden" name="id_tarea" value="<?php echo $tareaId; ?>">
                         <textarea name="comentario" placeholder="Comenta..." required></textarea>
@@ -152,7 +129,6 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
                     </form>
                 </div>
             </div>
-
         </div>
     <?php endif; ?>
 </body>
@@ -191,6 +167,27 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
     .comentarios-chat p {
         word-wrap: break-word;
         overflow-wrap: break-word;
+    }
+
+    .tarea-detalle p {
+        /* white-space: pre; */
+        /* Respeta todos los espacios y saltos originales */
+        overflow-x: auto;
+        /* Permite scroll horizontal si es necesario */
+        word-break: keep-all;
+        /* Evita la división de palabras/palabras largas */
+        font-family: monospace;
+        /* Usa fuente monoespaciada para consistencia */
+        font-size: 16px;
+        /* Establece un tamaño de fuente fijo */
+        letter-spacing: 0;
+        /* Elimina espaciado adicional entre letras */
+        line-height: 1.2;
+        /* Controla el espacio entre líneas */
+        max-width: 100%;
+        /* Asegura que no exceda el ancho del contenedor */
+        display: block;
+        /* Mejor control del flujo */
     }
 
     .comentarios-chat {

@@ -17,11 +17,11 @@
                         <a href="cuenta.php" style="display: flex; align-items: center; padding: 5px 10px; border-radius: 10px; transition: background-color 0.3s, box-shadow 0.3s;">
                             <?php if ($usuario->getImagen() == null): ?>
 
-                                <img src="../Imagenes/Logo2.png" alt="Foto de perfil" style="width: 60px; height: 50px; border-radius: 50%; display: block;">
+                                <img src="../Imagenes/Logo3.png" alt="Foto de perfil" class="perfil-img">
 
                             <?php else: ?>
 
-                                <img src="<?= htmlspecialchars($usuario->getImagen()) ?>" alt="Foto de perfil" style="width: 60px; height: 50px; border-radius: 50%; display: block;">
+                                <img src="<?= htmlspecialchars($usuario->getImagen()) ?>" alt="Foto de perfil" class="perfil-img">
                             <?php endif; ?>
                             <span style="line-height: 45px; margin-left: 10px;"><?= htmlspecialchars($_SESSION['nombre_usuario']) ?></span>
                         </a>
@@ -127,5 +127,14 @@
 
     .Logo span {
         color: #00C897;
+    }
+
+    .perfil-img {
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid #3A7BFF;
+        box-shadow: 0 0 8px rgba(0, 0, 0, 0.4);
     }
 </style>
