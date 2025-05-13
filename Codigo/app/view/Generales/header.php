@@ -5,7 +5,7 @@
                 <li class="Tamaño"><a href="inicio.php" class="Logo"><span>O</span>pti<span>T</span>ask</a></li>
                 <li><a href="tareas.php">Crear Tarea</a></li>
                 <li><a href="detalleTarea.php">Mis Tareas</a></li>
-                <li><a href="favoritos.php">Favoritos</a></li>
+                <li><a href="urgentes.php">Urgentes</a></li>
                 <li><a href="contacto.php">Contacto</a></li>
             </ul>
         </div>

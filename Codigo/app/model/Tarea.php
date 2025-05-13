@@ -116,7 +116,7 @@ class Tarea
             VALUES (?, ?, ?, ?, ?, ?, ?)");
             $stmt->execute([$this->id_usuario, $this->titulo, $this->fecha_limite, $this->prioridad, $this->estado, $this->descripcion, $this->tiempo_estimado]);
             $this->id_tarea = $conn->lastInsertId();
-            
+
             return $conn->lastInsertId(); // Retorna el ID de la tarea creada AL IGUAL BORRAR SI FALLA
 
         } catch (PDOException $e) {
@@ -299,6 +299,56 @@ class Tarea
             echo "Error al actualizar la fecha límite de la tarea: " . $e->getMessage();
         }
     }
+
+
+    public static function getTareasUrgentes($id_usuario, $limite = 3)
+    {
+        try {
+            $conn = getDBConnection();
+
+            // IMPORTANTE: usar ? para el id_usuario y concatenar el límite de forma segura
+            $sql = "SELECT * FROM tarea 
+               WHERE id_usuario = ? 
+               AND estado != 'Completada'
+               AND fecha_limite >= CURDATE()
+               ORDER BY 
+                 CASE prioridad
+                   WHEN 'Alta' THEN 1
+                   WHEN 'Media' THEN 2
+                   WHEN 'Baja' THEN 3
+                   ELSE 4
+                 END,
+                 fecha_limite ASC
+               LIMIT $limite";
+               
+            $stmt = $conn->prepare($sql);
+            $stmt->execute([$id_usuario]);
+
+            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            $tareas_urgentes = [];
+            foreach ($result as $row) {
+                $tarea = new Tarea();
+                $tarea->setIdTarea($row['id_tarea']);
+                $tarea->setIdUsuario($row['id_usuario']);
+                $tarea->setTitulo($row['titulo']);
+                $tarea->setFechaCreacion($row['fecha_creacion']);
+                $tarea->setFechaLimite($row['fecha_limite']);
+                $tarea->setPrioridad($row['prioridad']);
+                $tarea->setEstado($row['estado']);
+                $tarea->setDescripcion($row['descripcion']);
+                $tarea->setTiempoEstimado($row['tiempo_estimado']);
+
+                $tareas_urgentes[] = $tarea;
+            }
+
+            return $tareas_urgentes;
+        } catch (PDOException $e) {
+            error_log("Error en getTareasUrgentes: " . $e->getMessage());
+            return [];
+        }
+    }
+
 
     // Actualizar una tarea
     public function update()
