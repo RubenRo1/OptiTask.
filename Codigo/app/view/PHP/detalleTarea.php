@@ -86,19 +86,6 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
                     <div id="countdown" style="font-size: 16px; color: #f39c12; margin-top: 5px;"></div>
                     <p><strong>Estado:</strong> <?php echo htmlspecialchars($Tareas->getEstado()); ?></p>
 
-                    <?php if (!empty($usuariosCompartidos)) : ?>
-                        <div class="compartida-icon" id="compartida-icon">
-                            <i class="fas fa-users"></i>
-                        </div>
-                        <div class="tooltip" id="tooltip">
-                            <h4>Compartida con:</h4>
-                            <ul>
-                                <?php foreach ($usuariosCompartidos as $nombreUsuario) : ?>
-                                    <li><?php echo "- " . htmlspecialchars($nombreUsuario); ?></li>
-                                <?php endforeach; ?>
-                            </ul>
-                        </div>
-                    <?php endif; ?>
                 </div>
                 <div class="subtareas">
                     <h3>Subtareas</h3>
@@ -185,6 +172,23 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
                 </div>
 
             </div>
+
+        </div>
+    <?php endif; ?>
+    <?php if (!empty($usuariosCompartidos)) : ?>
+        <div class="usuarios-compartidos-container">
+            <div class="compartida-icon">
+                <i class="fas fa-users"></i>
+                <span class="compartida-texto">Compartidos</span>
+                <div class="tooltip">
+                    <h4>Compartida con:</h4>
+                    <ul>
+                        <?php foreach ($usuariosCompartidos as $nombreUsuario): ?>
+                            <li><?php echo "- " . htmlspecialchars($nombreUsuario); ?></li>
+                        <?php endforeach; ?>
+                    </ul>
+                </div>
+            </div>
         </div>
     <?php endif; ?>
 </body>
@@ -249,6 +253,7 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
         /* Si el contenido excede la altura, muestra una barra de desplazamiento */
         width: 45%;
         /* Ajusta los anchos a un 45% */
+
     }
 
 
@@ -297,37 +302,88 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
 
 
     .tooltip {
-        display: none;
+        visibility: hidden;
+        opacity: 0;
         position: absolute;
-        transform: translateX(20px);
+        left: 50%;
+        bottom: 100%;
+        transform: translateX(-50%);
         background-color: #2C3E50;
-        border: 2px solid #34495E;
-        padding: 10px;
-        border-radius: 5px;
-        width: 200px;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-        z-index: 999;
+        border: 1px solid #34495E;
+        padding: 15px;
+        border-radius: 8px;
+        min-width: 200px;
+        max-width: 300px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        z-index: 1001;
+        transition: all 0.3s ease;
+        margin-bottom: 15px;
+        max-height: 300px;
+        overflow-y: auto;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+
     }
 
     .tooltip h4 {
-        font-size: 14px;
-        margin-bottom: 10px;
+        margin: 0 0 10px 0;
+        color: #ecf0f1;
+        font-size: 16px;
     }
 
     .tooltip ul {
-        list-style-type: none;
-        padding: 0;
+        max-height: 200px;
+        overflow-y: auto;
         margin: 0;
+        padding: 0;
+        list-style: none;
     }
 
     .tooltip li {
-        font-size: 13px;
-        margin-bottom: 5px;
+        padding: 5px 0;
+        border-bottom: 1px solid #3d4a52;
+        color: #bdc3c7;
+        font-size: 14px;
+    }
+
+    .tooltip li:last-child {
+        border-bottom: none;
+    }
+
+    /* Scrollbar para la lista de usuarios */
+    .tooltip ul::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .tooltip ul::-webkit-scrollbar-track {
+        background: #34495E;
+    }
+
+    .tooltip ul::-webkit-scrollbar-thumb {
+        background: #7f8c8d;
+        border-radius: 3px;
     }
 
     /* Mostrar la ventana emergente cuando el mouse pasa por encima */
     .compartida-icon {
-        width: 20px;
+
+        position: relative;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background-color: #3498db;
+        padding: 8px 12px;
+        border-radius: 20px;
+        color: white;
+        cursor: pointer;
+        transition: all 0.3s ease;
+
+    }
+
+    .compartida-icon:hover .tooltip {
+        visibility: visible;
+        opacity: 1;
+        margin-left: 10px;
     }
 
     .compartida-icon:hover+.tooltip {
@@ -353,6 +409,13 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
         padding: 15px;
         border-radius: 8px;
         color: white;
+    }
+
+    .usuarios-compartidos-container {
+        position: absolute;
+        right: 20px;
+        bottom: 10px;
+        z-index: 1000;
     }
 
     .usuarios-compartidos h4 {
@@ -389,6 +452,7 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
     .comentarios-lista::-webkit-scrollbar,
     .tarea-detalle::-webkit-scrollbar,
     .subtareas-lista::-webkit-scrollbar,
+    .tooltip::-webkit-scrollbar,
     .comentarios-chat::-webkit-scrollbar {
         display: none;
         /* Oculta la barra de desplazamiento */

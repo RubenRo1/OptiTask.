@@ -319,7 +319,7 @@ if ((isset($_SESSION['nombre_usuario']))) {
 
     <div id="popupCompartir">
         <h3></h3>
-        <form id="formCompartir" onsubmit="refrescarPagina(event)">
+        <form id="formCompartir">
             <input type="hidden" name="id_tarea" id="popupIdTarea">
             <label for="usuario">Nombre del usuario a compartir:</label><br>
             <input type="text" name="nombre_usuario_destino" id="popupUsuario" required><br><br>
@@ -391,7 +391,13 @@ if ((isset($_SESSION['nombre_usuario']))) {
             .then(response => response.text())
             .then(data => {
                 document.getElementById('resultadoCompartir').textContent = data;
-                setTimeout(() => cerrarPopup(), 1500); // Cierra el popup después de mostrar el mensaje
+
+                setTimeout(() => {
+                    cerrarPopup();
+
+                    // Redirigir después de cerrar el popup
+                    refrescarPagina(idTarea);
+                }, 1500); // Espera 1.5 segundos para mostrar mensaje
             })
             .catch(error => {
                 console.error('Error:', error);
@@ -399,16 +405,10 @@ if ((isset($_SESSION['nombre_usuario']))) {
             });
     });
 
-    function refrescarPagina(event) {
-        event.preventDefault(); // Evita que el formulario se envíe de la manera tradicional
-        const form = document.getElementById('formCompartir');
-        const idTarea = document.getElementById('popupIdTarea').value;
-
-        // Si estamos en la misma página (detalleTarea.php), hacemos un "f5"
-        if (window.location.pathname === '/detalleTarea.php') {
-            location.reload(); // Realiza un "f5" para actualizar la página sin redirigir
+    function refrescarPagina(idTarea) {
+        if (window.location.pathname.endsWith('/detalleTarea.php')) {
+            location.reload();
         } else {
-            // Si no estamos en detalleTarea.php, redirigimos con el parámetro en la URL
             window.location.href = 'detalleTarea.php?id=' + encodeURIComponent(idTarea);
         }
     }
