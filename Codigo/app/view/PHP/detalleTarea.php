@@ -187,40 +187,43 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
             </div>
         </div>
     <?php endif; ?>
-
-    <script>
-        const fechaLimiteTexto = "<?php echo $Tareas->getFechaLimite(); ?>".replace(" ", "T");
-        const fechaLimite = new Date(fechaLimiteTexto).getTime();
-
-
-
-        const countdownElement = document.getElementById("countdown");
-
-        function actualizarCountdown() {
-            const ahora = new Date().getTime();
-            const tiempoRestante = fechaLimite - ahora;
-
-            if (tiempoRestante <= 0) {
-                countdownElement.innerHTML = "¡La fecha límite ha expirado!";
-                countdownElement.style.color = "red";
-                clearInterval(intervalo); // Detenemos el contador
-                return;
-            }
-
-            const dias = Math.floor(tiempoRestante / (1000 * 60 * 60 * 24));
-            const horas = Math.floor((tiempoRestante % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const minutos = Math.floor((tiempoRestante % (1000 * 60 * 60)) / (1000 * 60));
-            const segundos = Math.floor((tiempoRestante % (1000 * 60)) / 1000);
-
-            countdownElement.innerHTML = `Tiempo restante: ${dias}d ${horas}h ${minutos}m ${segundos}s`;
-            countdownElement.style.color = "#f39c12"; // color mientras hay tiempo
-        }
-
-        const intervalo = setInterval(actualizarCountdown, 1000);
-        actualizarCountdown(); // Ejecuta inmediatamente al cargar
-    </script>
-
 </body>
+<!-- Al poner el script no va genera -->
+<script>
+    // Solo ejecutar el script si estamos en la vista de detalle de tarea
+    <?php if ($cont != 1 && $Tareas !== null) : ?>
+        document.addEventListener('DOMContentLoaded', function() {
+            const fechaLimiteTexto = "<?php echo $Tareas->getFechaLimite(); ?>".replace(" ", "T");
+            const fechaLimite = new Date(fechaLimiteTexto).getTime();
+            const countdownElement = document.getElementById("countdown");
+
+            if (countdownElement && !isNaN(fechaLimite)) {
+                function actualizarCountdown() {
+                    const ahora = new Date().getTime();
+                    const tiempoRestante = fechaLimite - ahora;
+
+                    if (tiempoRestante <= 0) {
+                        countdownElement.innerHTML = "¡La fecha límite ha expirado!";
+                        countdownElement.style.color = "red";
+                        clearInterval(intervalo);
+                        return;
+                    }
+
+                    const dias = Math.floor(tiempoRestante / (1000 * 60 * 60 * 24));
+                    const horas = Math.floor((tiempoRestante % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                    const minutos = Math.floor((tiempoRestante % (1000 * 60 * 60)) / (1000 * 60));
+                    const segundos = Math.floor((tiempoRestante % (1000 * 60)) / 1000);
+
+                    countdownElement.innerHTML = `Tiempo restante: ${dias}d ${horas}h ${minutos}m ${segundos}s`;
+                    countdownElement.style.color = "#f39c12";
+                }
+
+                const intervalo = setInterval(actualizarCountdown, 1000);
+                actualizarCountdown();
+            }
+        });
+    <?php endif; ?>
+</script>
 
 <style>
     .content-tareas {
