@@ -7,7 +7,6 @@ class Tarea
 {
     private $id_tarea;
     private $id_usuario;
-    private $id_categoria;
     private $titulo;
     private $fecha_creacion;
     private $fecha_limite;
@@ -25,11 +24,6 @@ class Tarea
     public function getIdUsuario()
     {
         return $this->id_usuario;
-    }
-
-    public function getIdCategoria()
-    {
-        return $this->id_categoria;
     }
 
     public function getTitulo()
@@ -78,11 +72,6 @@ class Tarea
         $this->id_usuario = $id_usuario;
     }
 
-    public function setIdCategoria($id_categoria)
-    {
-        $this->id_categoria = $id_categoria;
-    }
-
     public function setTitulo($titulo)
     {
         $this->titulo = $titulo;
@@ -123,9 +112,9 @@ class Tarea
     {
         try {
             $conn = getDBConnection();
-            $stmt = $conn->prepare("INSERT INTO tarea (id_usuario, id_categoria, titulo, fecha_limite, prioridad, estado, descripcion, tiempo_estimado) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-            $stmt->execute([$this->id_usuario, $this->id_categoria, $this->titulo, $this->fecha_limite, $this->prioridad, $this->estado, $this->descripcion, $this->tiempo_estimado]);
+            $stmt = $conn->prepare("INSERT INTO tarea (id_usuario, titulo, fecha_limite, prioridad, estado, descripcion, tiempo_estimado) 
+            VALUES (?, ?, ?, ?, ?, ?, ?)");
+            $stmt->execute([$this->id_usuario, $this->titulo, $this->fecha_limite, $this->prioridad, $this->estado, $this->descripcion, $this->tiempo_estimado]);
             $this->id_tarea = $conn->lastInsertId();
             
             return $conn->lastInsertId(); // Retorna el ID de la tarea creada AL IGUAL BORRAR SI FALLA
@@ -148,7 +137,6 @@ class Tarea
                 $tarea = new Tarea();
                 $tarea->setIdTarea($row['id_tarea']);
                 $tarea->setIdUsuario($row['id_usuario']);
-                $tarea->setIdCategoria($row['id_categoria']);
                 $tarea->setTitulo($row['titulo']);
                 $tarea->setFechaCreacion($row['fecha_creacion']);
                 $tarea->setFechaLimite($row['fecha_limite']);
@@ -178,7 +166,6 @@ class Tarea
                 $tarea = new Tarea();
                 $tarea->setIdTarea($result['id_tarea']);
                 $tarea->setIdUsuario($result['id_usuario']);
-                $tarea->setIdCategoria($result['id_categoria']);
                 $tarea->setTitulo($result['titulo']);
                 $tarea->setFechaCreacion($result['fecha_creacion']);
                 $tarea->setFechaLimite($result['fecha_limite']);
@@ -209,7 +196,6 @@ class Tarea
                     $tarea = new Tarea();
                     $tarea->setIdTarea($row['id_tarea']);
                     $tarea->setIdUsuario($row['id_usuario']);
-                    $tarea->setIdCategoria($row['id_categoria']);
                     $tarea->setTitulo($row['titulo']);
                     $tarea->setFechaCreacion($row['fecha_creacion']);
                     $tarea->setFechaLimite($row['fecha_limite']);
@@ -319,8 +305,8 @@ class Tarea
     {
         try {
             $conn = getDBConnection();
-            $stmt = $conn->prepare("UPDATE tarea SET titulo = ?, id_categoria = ?, fecha_limite = ?, prioridad = ?, estado = ?, descripcion = ?, tiempo_estimado = ? WHERE id_tarea = ?");
-            $stmt->execute([$this->titulo, $this->id_categoria, $this->fecha_limite, $this->prioridad, $this->estado, $this->descripcion, $this->tiempo_estimado, $this->id_tarea]);
+            $stmt = $conn->prepare("UPDATE tarea SET titulo = ?, fecha_limite = ?, prioridad = ?, estado = ?, descripcion = ?, tiempo_estimado = ? WHERE id_tarea = ?");
+            $stmt->execute([$this->titulo, $this->fecha_limite, $this->prioridad, $this->estado, $this->descripcion, $this->tiempo_estimado, $this->id_tarea]);
         } catch (PDOException $e) {
             echo "Error al actualizar la tarea: " . $e->getMessage();
         }

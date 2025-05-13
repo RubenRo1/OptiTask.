@@ -9,6 +9,8 @@ require_once(CONTROLLER . 'CompartidasController.php');
 require_once(MODEL . 'Compartidas.php');
 require_once(CONTROLLER . 'ComentarioController.php');
 require_once(MODEL . 'Comentario.php');
+require_once(CONTROLLER . 'SubtareaController.php');
+require_once(MODEL . 'Subtarea.php');
 
 session_start();
 
@@ -81,6 +83,7 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
                     <h2><?php echo htmlspecialchars($Tareas->getTitulo()); ?></h2>
                     <p><?php echo nl2br(str_replace(" ", "&nbsp;", htmlspecialchars($Tareas->getDescripcion()))); ?></p>
                     <p><strong>Fecha de entrega:</strong> <?php echo htmlspecialchars($Tareas->getFechaLimite()); ?></p>
+                    <div id="countdown" style="font-size: 16px; color: #f39c12; margin-top: 5px;"></div>
                     <p><strong>Estado:</strong> <?php echo htmlspecialchars($Tareas->getEstado()); ?></p>
 
                     <?php if (!empty($usuariosCompartidos)) : ?>
@@ -97,7 +100,59 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
                         </div>
                     <?php endif; ?>
                 </div>
+                <div class="subtareas">
+                    <h3>Subtareas</h3>
+                    <div class="subtareas-lista">
 
+
+                        <?php
+                        // Obtener las subtareas asociadas a esta tarea
+                        $subtareaController = new SubtareaController();
+                        $subtareas = $subtareaController->obtenerSubtareasPorTarea($tareaId);
+
+                        if (empty($subtareas)) {
+                            echo "<p>No hay subtareas asignadas a esta tarea.</p>";
+                        } else {
+                            echo "<ul>";
+                            foreach ($subtareas as $subtarea) {
+                                $completado = $subtarea->getCompletado();
+                                $checked = $completado ? "checked" : "";  // Si está completada, marcar el checkbox
+                                echo "<li>";
+                                echo "<form method='POST' action='actualizar_subtarea.php' class='subtarea-form'>";
+                                echo "<input type='hidden' name='id_subtarea' value='" . $subtarea->getIdSubtarea() . "'>";
+                                echo "<div class='subtarea-contenido'>";
+                                echo "<div class='subtarea-izquierda'>";
+                                echo "<input type='checkbox' name='completado' $checked onclick='this.form.submit()'> ";
+                                echo "<span>" . htmlspecialchars($subtarea->getDescripcion()) . "</span>";
+                                echo "</div>";
+                                $icono = $completado
+                                    ? "<i class='fas fa-check-circle estado-icono completado' title='Completada'></i>"
+                                    : "<i class='fas fa-hourglass-half estado-icono pendiente' title='Pendiente'></i>";
+                                echo "<div class='subtarea-derecha'>$icono</div>";
+
+                                echo "</div>";
+                                echo "</form>";
+                                echo "</li>";
+                            }
+                            echo "</ul>";
+                        }
+                        ?>
+                    </div>
+
+                    <!-- Formulario para agregar una nueva subtarea -->
+                    <form method="POST" action="agregar_subtarea.php">
+                        <input type="hidden" name="id_tarea" value="<?php echo $tareaId; ?>">
+                        <input type="text" name="descripcion" placeholder="Nueva subtarea" required>
+                        <button type="submit">Agregar Subtarea</button>
+                    </form>
+                    <!-- Botón para borrar subtareas completadas -->
+                    <form method="POST" action="eliminar_subtareas_completadas.php" onsubmit="return confirm('¿Estás seguro de que deseas eliminar todas las subtareas completadas?');">
+                        <input type="hidden" name="id_tarea" value="<?php echo $tareaId; ?>">
+                        <button type="submit" class="borrar-subtareas">
+                            Borrar Subtareas Completadas
+                        </button>
+                    </form>
+                </div>
                 <div class="comentarios-chat">
                     <h3>Comentarios</h3>
                     <div class="comentarios-lista">
@@ -128,9 +183,43 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
                         <button type="submit">Enviar</button>
                     </form>
                 </div>
+
             </div>
         </div>
     <?php endif; ?>
+
+    <script>
+        const fechaLimiteTexto = "<?php echo $Tareas->getFechaLimite(); ?>".replace(" ", "T");
+        const fechaLimite = new Date(fechaLimiteTexto).getTime();
+
+
+
+        const countdownElement = document.getElementById("countdown");
+
+        function actualizarCountdown() {
+            const ahora = new Date().getTime();
+            const tiempoRestante = fechaLimite - ahora;
+
+            if (tiempoRestante <= 0) {
+                countdownElement.innerHTML = "¡La fecha límite ha expirado!";
+                countdownElement.style.color = "red";
+                clearInterval(intervalo); // Detenemos el contador
+                return;
+            }
+
+            const dias = Math.floor(tiempoRestante / (1000 * 60 * 60 * 24));
+            const horas = Math.floor((tiempoRestante % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutos = Math.floor((tiempoRestante % (1000 * 60 * 60)) / (1000 * 60));
+            const segundos = Math.floor((tiempoRestante % (1000 * 60)) / 1000);
+
+            countdownElement.innerHTML = `Tiempo restante: ${dias}d ${horas}h ${minutos}m ${segundos}s`;
+            countdownElement.style.color = "#f39c12"; // color mientras hay tiempo
+        }
+
+        const intervalo = setInterval(actualizarCountdown, 1000);
+        actualizarCountdown(); // Ejecuta inmediatamente al cargar
+    </script>
+
 </body>
 
 <style>
@@ -144,8 +233,7 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
 
     }
 
-    .tarea-detalle,
-    .comentarios-chat {
+    .tarea-detalle {
         background-color: #2C3E50;
         border: 1px solid #39424A;
         padding: 20px;
@@ -164,6 +252,7 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
 
     /* Evitar que el contenido se desborde y añadir barra de desplazamiento si es necesario */
     .tarea-detalle p,
+    .subtareas p,
     .comentarios-chat p {
         word-wrap: break-word;
         overflow-wrap: break-word;
@@ -188,11 +277,6 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
         /* Asegura que no exceda el ancho del contenedor */
         display: block;
         /* Mejor control del flujo */
-    }
-
-    .comentarios-chat {
-        width: 40%;
-        margin: 0;
     }
 
     .general {
@@ -280,7 +364,9 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
         padding: 15px;
         border-radius: 8px;
         color: white;
-        max-width: 350px;
+        max-width: 310px;
+        width: 40%;
+        margin: 0;
     }
 
     .comentarios-chat h3 {
@@ -290,7 +376,7 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
 
     .comentarios-lista {
         margin-bottom: 20px;
-        max-height: 300px;
+        max-height: 355px;
         overflow-y: scroll;
         /* overflow: hidden; */
 
@@ -299,6 +385,7 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
 
     .comentarios-lista::-webkit-scrollbar,
     .tarea-detalle::-webkit-scrollbar,
+    .subtareas-lista::-webkit-scrollbar,
     .comentarios-chat::-webkit-scrollbar {
         display: none;
         /* Oculta la barra de desplazamiento */
@@ -309,7 +396,9 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
         margin-bottom: 10px;
         padding: 10px;
         border-radius: 5px;
+        word-break: break-word;
 
+        white-space: normal;
     }
 
     .comentario strong {
@@ -351,6 +440,161 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
 
     button:hover {
         background-color: #16A085;
+    }
+
+    .subtareas {
+        background-color: #2C3E50;
+        border: 1px solid #39424A;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        color: white;
+        max-height: 600px;
+        overflow-y: auto;
+        width: 15%;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .subtareas ul {
+        list-style: none;
+        padding-left: 0;
+    }
+
+    .subtareas li {
+        margin-bottom: 12px;
+        background-color: #34495E;
+        border-radius: 6px;
+        padding: 0;
+    }
+
+    .subtareas li:hover {
+        background-color: #3c5a73;
+    }
+
+    .subtareas input[type="checkbox"] {
+        transform: scale(1.2);
+        cursor: pointer;
+    }
+
+    .subtareas strong {
+        font-size: 0.85rem;
+        color: #bdc3c7;
+        white-space: nowrap;
+    }
+
+    .subtareas .estado-icono {
+        margin-left: auto;
+        font-size: 1rem;
+    }
+
+    .subtareas .estado-icono.completado {
+        color: #2ecc71;
+    }
+
+    .subtareas .estado-icono.pendiente {
+        color: #f1c40f;
+    }
+
+    .subtarea-form {
+        display: block;
+        margin: 0;
+
+    }
+
+    .subtareas form input[type="text"] {
+        width: 100%;
+        /* padding: 10px; */
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        background-color: #34495E;
+        color: white;
+        /* margin-bottom: 10px; */
+        font-size: 14px;
+        /* Asegura que el texto sea legible */
+        height: 30px;
+        /* Añade altura similar al textarea */
+        resize: none;
+        /* Deshabilita el cambio de tamaño */
+    }
+
+    .subtareas form button {
+        margin-top: 10px;
+        width: 100%;
+        padding: 5px;
+        border: none;
+        background-color: #1ABC9C;
+        color: white;
+        font-size: 16px;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    .subtareas form button:hover {
+        background-color: #16A085;
+    }
+
+    /* Estilo para el botón de borrar subtareas completadas */
+    .subtareas form button.borrar-subtareas {
+        background-color: #e74c3c;
+        color: white;
+        border: none;
+        padding: 5px;
+        font-size: 16px;
+        border-radius: 5px;
+        cursor: pointer;
+        width: 100%;
+        margin-top: 6px;
+
+    }
+
+    /* Cambio de color al pasar el cursor */
+    .subtareas form button.borrar-subtareas:hover {
+        background-color: #c0392b;
+        /* Rojo más oscuro cuando se pasa el mouse */
+    }
+
+    .subtarea-contenido {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px;
+    }
+
+    .subtarea-izquierda {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-grow: 1;
+        overflow: hidden;
+    }
+
+    .subtarea-izquierda span {
+        white-space: normal;
+        word-break: break-word;
+        color: white;
+    }
+
+    .subtarea-derecha {
+        flex-shrink: 0;
+        margin-left: 10px;
+    }
+
+    .estado-icono {
+        font-size: 1rem;
+    }
+
+    .estado-icono.completado {
+        color: #2ecc71;
+    }
+
+    .estado-icono.pendiente {
+        color: #f1c40f;
+    }
+
+    .subtareas-lista {
+        max-height: 410px;
+        overflow-y: auto;
+        margin-bottom: 20px;
     }
 </style>
 

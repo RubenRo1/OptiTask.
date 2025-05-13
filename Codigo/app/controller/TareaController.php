@@ -2,7 +2,6 @@
 require_once(__DIR__ . '/../../rutas.php');
 require_once(CONFIG . 'dbConnection.php');
 require_once(MODEL . 'Tarea.php');
-require_once(MODEL . 'Categoria.php');  // Suponiendo que también quieras acceder a categorías desde aquí.
 
 class TareaController {
     // Obtener todas las tareas
@@ -20,7 +19,7 @@ class TareaController {
     }
 
     // Crear una nueva tarea
-    public function crearTarea($id_usuario, $titulo, $fecha_limite, $prioridad, $estado, $descripcion, $tiempo_estimado, $id_categoria = null) {
+    public function crearTarea($id_usuario, $titulo, $fecha_limite, $prioridad, $estado, $descripcion, $tiempo_estimado) {
         $nuevaTarea = new Tarea();
         $nuevaTarea->setIdUsuario($id_usuario);
         $nuevaTarea->setTitulo($titulo);
@@ -29,7 +28,6 @@ class TareaController {
         $nuevaTarea->setEstado($estado);
         $nuevaTarea->setDescripcion($descripcion);
         $nuevaTarea->setTiempoEstimado($tiempo_estimado);
-        $nuevaTarea->setIdCategoria($id_categoria);  // Solo si se proporciona
 
        $nuevaTarea->create();
 
@@ -40,7 +38,7 @@ class TareaController {
     }
 
     // Modificar tarea (cualquier campo)
-    public function modificarTarea($id_tarea, $titulo, $fecha_limite, $prioridad, $estado, $descripcion, $tiempo_estimado, $id_categoria = null) {
+    public function modificarTarea($id_tarea, $titulo, $fecha_limite, $prioridad, $estado, $descripcion, $tiempo_estimado) {
         $tarea = Tarea::getTareaById($id_tarea);
         if ($tarea) {
             $tarea->setTitulo($titulo);
@@ -49,7 +47,6 @@ class TareaController {
             $tarea->setEstado($estado);
             $tarea->setDescripcion($descripcion);
             $tarea->setTiempoEstimado($tiempo_estimado);
-            $tarea->setIdCategoria($id_categoria);  // Solo si se proporciona
 
             $tarea->update();
         }
