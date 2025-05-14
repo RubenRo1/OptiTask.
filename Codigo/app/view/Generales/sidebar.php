@@ -314,7 +314,7 @@ if ((isset($_SESSION['nombre_usuario']))) {
         ?>
     </div>
     <button id="botonAbrir">
-        ←
+        →
     </button>
 
     <div id="popupCompartir">
@@ -353,11 +353,6 @@ if ((isset($_SESSION['nombre_usuario']))) {
             sidebar.classList.toggle("open"); // Alterna la visibilidad de la barra lateral
             mainContent.classList.toggle("sidebar-open"); // Alterna el estado del contenido principal (si aplica)
 
-            if (sidebar.classList.contains("open")) {
-                toggleButton.textContent = "←"; // Cambiar a "-" cuando el sidebar está abierto
-            } else {
-                toggleButton.textContent = "→"; // Cambiar a "+" cuando el sidebar está cerrado
-            }
         });
     });
 

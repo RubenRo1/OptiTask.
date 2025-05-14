@@ -81,9 +81,9 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
             <div class="content-tareas">
                 <div class="tarea-detalle">
                     <h2><?php echo htmlspecialchars($Tareas->getTitulo()); ?></h2>
+                    <div id="countdown" style="font-size: 16px; color: #f39c12; margin-top: 5px;"></div>
                     <p><?php echo nl2br(str_replace(" ", "&nbsp;", htmlspecialchars($Tareas->getDescripcion()))); ?></p>
                     <p><strong>Fecha de entrega:</strong> <?php echo htmlspecialchars($Tareas->getFechaLimite()); ?></p>
-                    <div id="countdown" style="font-size: 16px; color: #f39c12; margin-top: 5px;"></div>
                     <p><strong>Estado:</strong> <?php echo htmlspecialchars($Tareas->getEstado()); ?></p>
 
                 </div>
@@ -241,7 +241,7 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
     }
 
     .tarea-detalle {
-        background-color: #2C3E50;
+        background-color: #34495E;
         border: 1px solid #39424A;
         padding: 20px;
         border-radius: 8px;
@@ -252,6 +252,7 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
         overflow: auto;
         /* Si el contenido excede la altura, muestra una barra de desplazamiento */
         width: 45%;
+        transition: transform 0.3s ease;
         /* Ajusta los anchos a un 45% */
 
     }
@@ -433,6 +434,7 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
         max-width: 310px;
         width: 40%;
         margin: 0;
+        transition: transform 0.3s ease;
     }
 
     .comentarios-chat h3 {
@@ -510,7 +512,7 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
     }
 
     .subtareas {
-        background-color: #2C3E50;
+        background-color: #34495E;
         border: 1px solid #39424A;
         padding: 20px;
         border-radius: 8px;
@@ -520,6 +522,7 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
         overflow-y: auto;
         width: 15%;
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        transition: transform 0.3s ease;
     }
 
     .subtareas ul {
@@ -528,7 +531,7 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
     }
 
     .subtareas li {
-        margin-bottom: 12px;
+        margin-bottom: 6px;
         background-color: #34495E;
         border-radius: 6px;
         padding: 0;
@@ -662,6 +665,19 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
         max-height: 410px;
         overflow-y: auto;
         margin-bottom: 20px;
+    }
+
+    .tarea-detalle:hover,
+    .subtareas:hover,
+    .comentarios-chat:hover {
+
+        transform: scale(1.01);
+
+    }
+
+    .compartida-icon:hover {
+        transform: scale(1.05);
+        background-color: #2980b9;
     }
 </style>
 

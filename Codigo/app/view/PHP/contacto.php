@@ -38,14 +38,20 @@ if (!isset($_SESSION['nombre_usuario'])) {
     <style>
         .contact-form {
 
-            background: #2B2B2B;
+            background-color: #1E1E1E;
             padding: 25px 50px;
             border: solid 1px #414548;
             border-radius: 10px;
-            max-width: 600px;
-            margin: 6% auto;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            max-width: 700px;
+            margin: 8% auto;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            color: #EEE;
+            font-family: 'Comfortaa', sans-serif;
         }
+
 
         .contact-form h2 {
             margin-bottom: 20px;
@@ -61,6 +67,9 @@ if (!isset($_SESSION['nombre_usuario'])) {
             margin-bottom: 20px;
             border: 1px solid #ccc;
             border-radius: 6px;
+            background-color: #2B2B2B;
+            resize: none;
+
         }
 
         .contact-form button {
@@ -93,7 +102,7 @@ if (!isset($_SESSION['nombre_usuario'])) {
     <div class="contact-form">
 
         <!-- Posible añadido -->
-      <!-- <p>
+        <!-- <p>
             Contact Support
 
             Need assistance? Submit a request below and we will get to work!
@@ -102,7 +111,7 @@ if (!isset($_SESSION['nombre_usuario'])) {
 
             If you are an Atlassian certified partner, please confirm you are logged in using the account associated with your business email address (your company domain, NOT Atlassian domain, your customer’s domain, or personal email domain).
         </p>  -->
-        
+
         <h2>Contáctanos</h2>
 
         <?php if (isset($_GET['estado'])): ?>

@@ -154,6 +154,8 @@ if (isset($_POST['titulo'], $_POST['descripcion'], $_POST['fecha_limite'], $_POS
         font-size: 14px;
         box-shadow: inset 0 0 0 1px #444;
         transition: box-shadow 0.2s ease;
+        resize: none;
+
     }
 
     form input[type="text"]:focus,

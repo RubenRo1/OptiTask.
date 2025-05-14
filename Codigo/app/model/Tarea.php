@@ -310,7 +310,7 @@ class Tarea
             $sql = "SELECT * FROM tarea 
                WHERE id_usuario = ? 
                AND estado != 'Completada'
-               AND fecha_limite >= CURDATE()
+               AND fecha_limite > CURDATE()  -- Solo tareas con fecha límite en el futuro
                ORDER BY 
                  CASE prioridad
                    WHEN 'Alta' THEN 1
@@ -320,7 +320,7 @@ class Tarea
                  END,
                  fecha_limite ASC
                LIMIT $limite";
-               
+
             $stmt = $conn->prepare($sql);
             $stmt->execute([$id_usuario]);
 
