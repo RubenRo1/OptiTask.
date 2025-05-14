@@ -113,7 +113,7 @@ if ((isset($_SESSION['nombre_usuario']))) {
 
 
         .contenedor:hover {
-            background-color: #ddd;
+            background-color: #3a3a3a;
 
         }
 
@@ -272,7 +272,29 @@ if ((isset($_SESSION['nombre_usuario']))) {
             color: #80ff80;
         }
 
-        /* Mostrar al hacer hover en el contenedor */
+        #overlayFondo {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            width: 100vw;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 4;
+            /* Debajo de sidebar (z-index: 5) */
+        }
+
+        /* Mostrar fondo oscuro cuando sidebar esté abierta en móviles */
+        @media (max-width: 768px) {
+            .sidebar.open~#overlayFondo {
+                display: block;
+            }
+
+            .sidebar {
+                left: -240px;
+                /* Se mueve hacia la izquierda, cerrada */
+            }
+        }
     </style>
 </head>
 
@@ -317,6 +339,9 @@ if ((isset($_SESSION['nombre_usuario']))) {
         →
     </button>
 
+    <div id="overlayFondo"></div>
+
+
     <div id="popupCompartir">
         <h3></h3>
         <form id="formCompartir">
@@ -347,12 +372,18 @@ if ((isset($_SESSION['nombre_usuario']))) {
         const toggleButton = document.getElementById("botonAbrir");
         const sidebar = document.querySelector(".sidebar");
         const mainContent = document.querySelector(".content");
+        const overlayFondo = document.getElementById("overlayFondo");
 
         // Agregar un evento de clic al botón para alternar la clase "open" en la barra lateral
         toggleButton.addEventListener("click", () => {
             sidebar.classList.toggle("open"); // Alterna la visibilidad de la barra lateral
-            mainContent.classList.toggle("sidebar-open"); // Alterna el estado del contenido principal (si aplica)
+            mainContent.classList.toggle("sidebar-open"); // Alterna el estado del contenido principal
+        });
 
+        // Cerrar la sidebar al hacer clic en el fondo oscuro
+        overlayFondo.addEventListener("click", () => {
+            sidebar.classList.remove("open"); // Cierra la barra lateral
+            mainContent.classList.remove("sidebar-open"); // Quita el efecto de desplazamiento
         });
     });
 
