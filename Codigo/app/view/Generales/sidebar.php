@@ -278,6 +278,42 @@ if ((isset($_SESSION['nombre_usuario']))) {
             background-color: #999;
         }
 
+        #popupEliminar {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #2b2b2b;
+            padding: 25px 30px;
+            border-radius: 10px;
+            z-index: 999;
+            width: 320px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
+            color: white;
+            text-align: center;
+            font-family: Arial, sans-serif;
+        }
+
+        #popupEliminar button[type="submit"] {
+            background-color: #e74c3c;
+            color: white;
+        }
+
+        #popupEliminar button[type="submit"]:hover {
+            background-color: #c0392b;
+        }
+
+        #popupEliminar button[type="button"] {
+            background-color: #777;
+            color: white;
+        }
+
+        #popupEliminar button[type="button"]:hover {
+            background-color: #999;
+        }
+
+
         #resultadoCompartir {
             margin-top: 10px;
             font-size: 14px;
@@ -388,6 +424,16 @@ if ((isset($_SESSION['nombre_usuario']))) {
         <div id="resultadoCompartir" style="margin-top: 10px; color: green;"></div>
     </div>
 
+    <div id="popupEliminar">
+        <h3>Eliminar tarea</h3>
+        <p id="mensajeEliminar"></p>
+        <form id="formEliminar">
+            <input type="hidden" name="id_tarea" id="popupEliminarIdTarea">
+            <button type="submit">Eliminar</button>
+            <button type="button" onclick="cerrarPopupEliminar()">Cancelar</button>
+        </form>
+    </div>
+
     <div id="popupFondo" style="
     display:none;
     position:fixed;
@@ -402,28 +448,28 @@ if ((isset($_SESSION['nombre_usuario']))) {
 
 <script>
     document.addEventListener("DOMContentLoaded", function() {
-    const sidebar = document.querySelector(".sidebar");
-    const toggleButton = document.getElementById("botonAbrir");
-    const overlayFondo = document.getElementById("overlayFondo");
+        const sidebar = document.querySelector(".sidebar");
+        const toggleButton = document.getElementById("botonAbrir");
+        const overlayFondo = document.getElementById("overlayFondo");
 
-    // Verificar si es un dispositivo móvil (ancho <= 768px)
-    const isMobile = window.matchMedia("(max-width: 768px)").matches;
+        // Verificar si es un dispositivo móvil (ancho <= 768px)
+        const isMobile = window.matchMedia("(max-width: 768px)").matches;
 
-    // Si es móvil, cerrar la sidebar al inicio
-    if (isMobile) {
-        sidebar.classList.remove("open"); // Asegura que esté cerrada
-    }
+        // Si es móvil, cerrar la sidebar al inicio
+        if (isMobile) {
+            sidebar.classList.remove("open"); // Asegura que esté cerrada
+        }
 
-    // Botón para abrir/cerrar sidebar
-    toggleButton.addEventListener("click", () => {
-        sidebar.classList.toggle("open");
+        // Botón para abrir/cerrar sidebar
+        toggleButton.addEventListener("click", () => {
+            sidebar.classList.toggle("open");
+        });
+
+        // Cerrar sidebar al hacer clic fuera (overlay)
+        overlayFondo.addEventListener("click", () => {
+            sidebar.classList.remove("open");
+        });
     });
-
-    // Cerrar sidebar al hacer clic fuera (overlay)
-    overlayFondo.addEventListener("click", () => {
-        sidebar.classList.remove("open");
-    });
-});
 
     function abrirPopup(idTarea, tituloTarea) {
         document.getElementById('popupIdTarea').value = idTarea;
@@ -438,6 +484,19 @@ if ((isset($_SESSION['nombre_usuario']))) {
         document.getElementById('popupFondo').style.display = 'none';
         document.getElementById('resultadoCompartir').textContent = ''; // Limpiar mensaje de resultado
     }
+
+    function abrirPopupEliminar(idTarea, tituloTarea) {
+        document.getElementById('popupEliminarIdTarea').value = idTarea;
+        document.getElementById('mensajeEliminar').textContent = `¿Estás seguro que deseas eliminar la tarea: "${tituloTarea}"?`;
+        document.getElementById('popupEliminar').style.display = 'block';
+        document.getElementById('popupFondo').style.display = 'block';
+    }
+
+    function cerrarPopupEliminar() {
+        document.getElementById('popupEliminar').style.display = 'none';
+        document.getElementById('popupFondo').style.display = 'none';
+    }
+
 
     document.getElementById('formCompartir').addEventListener('submit', function(e) {
         e.preventDefault(); // Evita el envío tradicional del formulario
@@ -477,27 +536,32 @@ if ((isset($_SESSION['nombre_usuario']))) {
         }
     }
 
-    function eliminarTarea(idTarea) {
-        if (confirm('¿Estás seguro de que deseas eliminar esta tarea?')) {
-            fetch('../Generales/eliminarTarea.php', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded'
-                    },
-                    body: 'id_tarea=' + encodeURIComponent(idTarea)
-                })
-                .then(response => response.text())
-                .then(data => {
-                    alert(data);
-                    // Recargar la página para ver los cambios
-                    location.reload(); // <-- Esta es la solución más simple
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('Error al eliminar la tarea');
-                });
-        }
+    function eliminarTarea(idTarea, tituloTarea) {
+        abrirPopupEliminar(idTarea, tituloTarea);
     }
+
+    document.getElementById('formEliminar').addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        const idTarea = document.getElementById('popupEliminarIdTarea').value;
+
+        fetch('../Generales/eliminarTarea.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: 'id_tarea=' + encodeURIComponent(idTarea)
+            })
+            .then(response => response.text())
+            .then(data => {
+                // alert(data);
+                location.reload();
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error al eliminar la tarea');
+            });
+    });
 </script>
 <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 

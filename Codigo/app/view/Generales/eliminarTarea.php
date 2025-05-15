@@ -12,8 +12,5 @@ if (isset($_POST['id_tarea'])) {
     // Eliminar la tarea
     $tareaController->eliminarTarea($idTarea);
 
-    echo "Tarea eliminada con éxito";
-} else {
-    echo "No se ha enviado el ID de la tarea";
-}
+} 
 ?>

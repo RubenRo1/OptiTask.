@@ -83,7 +83,7 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
                     <h2><?php echo htmlspecialchars($Tareas->getTitulo()); ?></h2>
                     <div id="countdown" style="font-size: 16px; color: #f39c12; margin-top: 5px;"></div>
                     <p><?php echo nl2br(str_replace(" ", "&nbsp;", htmlspecialchars($Tareas->getDescripcion()))); ?></p>
-                    <p><strong>Fecha de entrega:</strong> <?php echo htmlspecialchars($Tareas->getFechaLimite()); ?></p>
+                    <p><strong>Fecha de entrega:</strong> <?php echo date('d M', strtotime($Tareas->getFechaLimite())); ?></p>
                     <p><strong>Estado:</strong> <?php echo htmlspecialchars($Tareas->getEstado()); ?></p>
 
                 </div>
@@ -133,7 +133,7 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
                         <button type="submit">Agregar Subtarea</button>
                     </form>
                     <!-- Botón para borrar subtareas completadas -->
-                    <form method="POST" action="eliminar_subtareas_completadas.php" onsubmit="return confirm('¿Estás seguro de que deseas eliminar todas las subtareas completadas?');">
+                    <form method="POST" action="eliminar_subtareas_completadas.php">
                         <input type="hidden" name="id_tarea" value="<?php echo $tareaId; ?>">
                         <button type="submit" class="borrar-subtareas">
                             Borrar Subtareas Completadas
@@ -723,7 +723,7 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
         /* Opcional: Tooltip que no se salga en pantallas pequeñas */
         .tooltip {
             left: 50% !important;
-            bottom: 40px;;
+            bottom: 40px;
             transform: translateX(-50%) translateY(10px);
             max-width: 90vw;
             width: auto;
