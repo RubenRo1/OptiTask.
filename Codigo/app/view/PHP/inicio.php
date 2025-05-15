@@ -207,6 +207,23 @@ if (isset($_POST['modificar_cuenta'])) {
 
         .column-content {
             min-height: 100px;
+            max-height: 350px;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #888 transparent;
+        }
+
+        .column-content::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .column-content::-webkit-scrollbar-thumb {
+            background-color: #888;
+            border-radius: 3px;
+        }
+
+        .column-content::-webkit-scrollbar-thumb:hover {
+            background-color: #555;
         }
 
         .card {
@@ -274,12 +291,13 @@ if (isset($_POST['modificar_cuenta'])) {
             margin-right: 5px;
         }
 
-        @media (max-width: 900px) {
+        @media (max-width: 768px) {
             .estilo {
-                
+
                 margin-left: 100px;
-            
+
             }
+
         }
     </style>
 </body>

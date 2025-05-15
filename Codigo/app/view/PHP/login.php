@@ -77,7 +77,7 @@
         flex-direction: column;
         border: solid 1px #414548;
         border-radius: 10px;
-        width: 10%;
+        width: 15%;
         box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
         align-items: center;
 

@@ -36,6 +36,22 @@ if (!isset($_SESSION['nombre_usuario'])) {
     <title>Contacto</title>
     <?php include "../Generales/header.php" ?>
     <style>
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            min-height: 100vh;
+            /* overflow-x: hidden; */
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+           
+        }
+
         .contact-form {
 
             background-color: #1E1E1E;
@@ -50,7 +66,9 @@ if (!isset($_SESSION['nombre_usuario'])) {
             gap: 20px;
             color: #EEE;
             font-family: 'Comfortaa', sans-serif;
+
         }
+
 
 
         .contact-form h2 {

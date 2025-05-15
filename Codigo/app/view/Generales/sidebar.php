@@ -37,24 +37,36 @@ if ((isset($_SESSION['nombre_usuario']))) {
     <title>Mis Tareas</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <style>
-        .sidebar {
-            width: 240px;
+        html,
+        body {
+            margin: 0;
+            padding: 0;
             height: 100%;
-            position: absolute;
+        }
+
+        .sidebar {
+            position: fixed;
             top: 47px;
+            /* Altura del header */
             left: -240px;
+            bottom: 0;
+            width: 240px;
             background-color: #2B2B2B;
-            padding-top: 20px;
             border-right: 1px solid #414548;
+            box-shadow: 1px 0 0 #414548;
+            /* Refuerza el borde */
+            overflow-y: auto;
             z-index: 5;
             transition: left 0.3s ease-in-out;
-            overflow-y: auto;
 
         }
 
         .sidebar::-webkit-scrollbar {
-            display: none;
+            width: 5px;
+        }
 
+        .sidebar::-webkit-scrollbar-thumb {
+            background: #414548;
         }
 
 
@@ -292,7 +304,29 @@ if ((isset($_SESSION['nombre_usuario']))) {
 
             .sidebar {
                 left: -240px;
-                /* Se mueve hacia la izquierda, cerrada */
+                /* Inicialmente cerrada en móviles */
+            }
+
+            .sidebar.open {
+                left: 0;
+                /* Abierta cuando se activa */
+            }
+
+            /* Asegúrate de que el botón de abrir esté visible */
+            #botonAbrir {
+                display: block;
+            }
+        }
+
+        @media (min-width: 769px) {
+            .sidebar {
+                left: 0;
+                /* Siempre abierta en escritorio */
+            }
+
+            /* Oculta el botón de abrir en escritorio si no es necesario */
+            #botonAbrir {
+                display: none;
             }
         }
     </style>
@@ -368,24 +402,28 @@ if ((isset($_SESSION['nombre_usuario']))) {
 
 <script>
     document.addEventListener("DOMContentLoaded", function() {
-        // Obtener el botón de toggle y la barra lateral
-        const toggleButton = document.getElementById("botonAbrir");
-        const sidebar = document.querySelector(".sidebar");
-        const mainContent = document.querySelector(".content");
-        const overlayFondo = document.getElementById("overlayFondo");
+    const sidebar = document.querySelector(".sidebar");
+    const toggleButton = document.getElementById("botonAbrir");
+    const overlayFondo = document.getElementById("overlayFondo");
 
-        // Agregar un evento de clic al botón para alternar la clase "open" en la barra lateral
-        toggleButton.addEventListener("click", () => {
-            sidebar.classList.toggle("open"); // Alterna la visibilidad de la barra lateral
-            mainContent.classList.toggle("sidebar-open"); // Alterna el estado del contenido principal
-        });
+    // Verificar si es un dispositivo móvil (ancho <= 768px)
+    const isMobile = window.matchMedia("(max-width: 768px)").matches;
 
-        // Cerrar la sidebar al hacer clic en el fondo oscuro
-        overlayFondo.addEventListener("click", () => {
-            sidebar.classList.remove("open"); // Cierra la barra lateral
-            mainContent.classList.remove("sidebar-open"); // Quita el efecto de desplazamiento
-        });
+    // Si es móvil, cerrar la sidebar al inicio
+    if (isMobile) {
+        sidebar.classList.remove("open"); // Asegura que esté cerrada
+    }
+
+    // Botón para abrir/cerrar sidebar
+    toggleButton.addEventListener("click", () => {
+        sidebar.classList.toggle("open");
     });
+
+    // Cerrar sidebar al hacer clic fuera (overlay)
+    overlayFondo.addEventListener("click", () => {
+        sidebar.classList.remove("open");
+    });
+});
 
     function abrirPopup(idTarea, tituloTarea) {
         document.getElementById('popupIdTarea').value = idTarea;

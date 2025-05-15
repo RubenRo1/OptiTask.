@@ -240,6 +240,13 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
 
     }
 
+    .usuarios-compartidos-container,
+    .compartida-icon {
+        position: relative;
+        /* Para que tooltip se posicione respecto a este */
+        overflow: visible;
+    }
+
     .tarea-detalle {
         background-color: #34495E;
         border: 1px solid #39424A;
@@ -267,6 +274,7 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
         overflow-wrap: break-word;
     }
 
+
     .tarea-detalle p {
         /* white-space: pre; */
         /* Respeta todos los espacios y saltos originales */
@@ -289,6 +297,9 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
     }
 
     .general {
+        position: absolute;
+        top: 70px;
+        left: 35%;
         margin: 70px auto;
         border: 1px solid #39424A;
         background-color: #2C3E50;
@@ -313,17 +324,16 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
         border: 1px solid #34495E;
         padding: 15px;
         border-radius: 8px;
-        min-width: 200px;
-        max-width: 300px;
+        width: 150px;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
         z-index: 1001;
         transition: all 0.3s ease;
         margin-bottom: 15px;
         max-height: 300px;
         overflow-y: auto;
-        text-overflow: ellipsis;
-        white-space: nowrap;
 
+        white-space: normal;
+        word-wrap: break-word;
     }
 
     .tooltip h4 {
@@ -413,8 +423,8 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
     }
 
     .usuarios-compartidos-container {
-        position: absolute;
-        right: 20px;
+        position: fixed;
+        right: 40px;
         bottom: 10px;
         z-index: 1000;
     }
@@ -521,6 +531,7 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
         max-height: 600px;
         overflow-y: auto;
         width: 15%;
+        max-width: 310px;
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         transition: transform 0.3s ease;
     }
@@ -678,6 +689,46 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
     .compartida-icon:hover {
         transform: scale(1.05);
         background-color: #2980b9;
+    }
+
+    @media (max-width: 768px) {
+        .content-tareas {
+            flex-direction: column;
+            align-items: center;
+            margin: 20px 5%;
+            width: 90%;
+            gap: 15px;
+        }
+
+        .tarea-detalle,
+        .subtareas,
+        .comentarios-chat {
+            width: 100% !important;
+            /* Que cada bloque ocupe todo el ancho posible */
+            max-height: none;
+            /* Para evitar scroll forzado */
+        }
+
+        .usuarios-compartidos-container {
+            position: static;
+            /* Para que no se salga del flujo cuando cambia el layout */
+            right: auto;
+            bottom: auto;
+            margin-top: 10px;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Opcional: Tooltip que no se salga en pantallas pequeñas */
+        .tooltip {
+            left: 50% !important;
+            bottom: 40px;;
+            transform: translateX(-50%) translateY(10px);
+            max-width: 90vw;
+            width: auto;
+            white-space: normal;
+        }
     }
 </style>
 

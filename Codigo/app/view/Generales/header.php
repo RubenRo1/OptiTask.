@@ -52,7 +52,7 @@
         margin: 0;
         padding: 0;
         height: 100%;
-        overflow: hidden;
+        /* overflow: hidden; */
         background-color: #2B2B2B;
         color: white;
         font-family: comfortaa, sans-serif;
