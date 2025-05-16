@@ -39,10 +39,13 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
     } else {
         // Si la tarea existe, continuar con la lógica
         $compartidasController = new CompartidasController();
-        $usuariosCompartidos = [];
 
+        // Obtener todas las comparticiones de la tarea una sola vez
+        $compartidas = Compartidas::getByTarea($tareaId);
+
+        $usuariosCompartidos = [];
         if ($Tareas && $Tareas->getIdUsuario() == $usuario->getIdUsuario()) {
-            $compartidas = Compartidas::getByTarea($tareaId);
+            // Si es el dueño, listar a quiénes compartió
             foreach ($compartidas as $compartida) {
                 $usuarioDestino = $usuarioController->getUserById($compartida->getUsuario_Destino());
                 if ($usuarioDestino) {
@@ -50,10 +53,35 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
                 }
             }
         }
+
+        $usuarioQueCompartio = null;
+        $otrosUsuariosCompartidos = [];
+
+        if ($usuario) {
+            // Si la tarea fue compartida contigo, obtener quien la compartió
+            $compartidaConmigo = $compartidasController->obtenerCompartidasPorUsuarioYTarea($tareaId, $usuario->getIdUsuario());
+            if ($compartidaConmigo) {
+                $usuarioOrigen = $usuarioController->getUserById($compartidaConmigo->getUsuario_Origen());
+                if ($usuarioOrigen) {
+                    $usuarioQueCompartio = $usuarioOrigen->getNombre();
+                }
+            }
+
+            // Obtener otros usuarios a quienes se compartió excluyendo al actual
+            foreach ($compartidas as $compartida) {
+                $idUsuarioDestino = $compartida->getUsuario_Destino();
+                if ($idUsuarioDestino != $usuario->getIdUsuario()) {
+                    $usuarioDestino = $usuarioController->getUserById($idUsuarioDestino);
+                    if ($usuarioDestino) {
+                        $otrosUsuariosCompartidos[] = $usuarioDestino->getNombre();
+                    }
+                }
+            }
+        }
     }
 } else {
-    // Si no se pasa el ID, redirigir o mostrar un error
-    $cont = 1;  // Establecer $cont = 1 si no se pasa el ID
+   
+    $cont = 1;  
 }
 
 ?>
@@ -80,7 +108,12 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
         <div class="content">
             <div class="content-tareas">
                 <div class="tarea-detalle">
-                    <h2><?php echo htmlspecialchars($Tareas->getTitulo()); ?></h2>
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <h2><?php echo htmlspecialchars($Tareas->getTitulo()); ?></h2>
+                        <a href="editar_tarea.php?id=<?php echo $tareaId; ?>" class="boton-editar">
+                            <i class="fas fa-pen"></i>
+                        </a>
+                    </div>
                     <div id="countdown" style="font-size: 16px; color: #f39c12; margin-top: 5px;"></div>
                     <p><?php echo nl2br(str_replace(" ", "&nbsp;", htmlspecialchars($Tareas->getDescripcion()))); ?></p>
                     <p><strong>Fecha de entrega:</strong> <?php echo date('d M', strtotime($Tareas->getFechaLimite())); ?></p>
@@ -191,8 +224,31 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
             </div>
         </div>
     <?php endif; ?>
+
+ <?php if ($usuarioQueCompartio !== null): ?>
+        <div class="usuarios-compartidos-container">
+            <div class="compartida-icon">
+                <i class="fas fa-user-friends"></i>
+                <span class="compartida-texto">Compartida por</span>
+                <div class="tooltip">
+                    <h4>Compartida por:</h4>
+                    <ul>
+                        <li><?php echo htmlspecialchars($usuarioQueCompartio); ?></li>
+                    </ul>
+
+                    <?php if (!empty($otrosUsuariosCompartidos)): ?>
+                        <h4>También compartido con:</h4>
+                        <ul>
+                            <?php foreach ($otrosUsuariosCompartidos as $nombreUsuario): ?>
+                                <li><?php echo htmlspecialchars($nombreUsuario); ?></li>
+                            <?php endforeach; ?>
+                        </ul>
+                    <?php endif; ?>
+                </div>
+            </div>
+        </div>
+    <?php endif; ?>
 </body>
-<!-- Al poner el script no va genera -->
 <script>
     // Solo ejecutar el script si estamos en la vista de detalle de tarea
     <?php if ($cont != 1 && $Tareas !== null) : ?>
@@ -729,6 +785,22 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
             width: auto;
             white-space: normal;
         }
+
+    }
+
+    /* Opción 2: Subrayado animado */
+    .boton-editar {
+        position: relative;
+        color: white;
+        text-decoration: none;
+        transition: color 0.3s ease;
+    }
+
+    .boton-editar:hover {
+        transform: scale(1.1);
+        opacity: 0.8;
+        color: #ddd;
+        transition: transform 0.3s ease;
     }
 </style>
 

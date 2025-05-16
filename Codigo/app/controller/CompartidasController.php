@@ -55,6 +55,12 @@ class CompartidasController
         return Compartidas::getByUserDestino($id_usuario_destino);
     }
 
+    // Obtener tareas compartidas por usuario y tarea
+    public function obtenerCompartidasPorUsuarioYTarea($id_usuario_origen, $id_tarea)
+    {
+        return Compartidas::getCompartidasByTareaAndUser($id_usuario_origen, $id_tarea);
+    }
+
     // Modificar una tarea compartida
     public function modificarCompartida($id_compartidas, $id_tarea, $id_usuario_origen, $id_usuario_destino)
     {

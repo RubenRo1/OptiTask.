@@ -365,6 +365,18 @@ if ((isset($_SESSION['nombre_usuario']))) {
                 display: none;
             }
         }
+
+        .prioridad-alta {
+            border-left: 2px solid #ff6b6b;
+        }
+
+        .prioridad-media {
+            border-left: 2px solid #ffa500;
+        }
+
+        .prioridad-baja {
+            border-left: 2px solid #4CAF50;
+        }
     </style>
 </head>
 
@@ -374,9 +386,11 @@ if ((isset($_SESSION['nombre_usuario']))) {
         <?php
         if (!empty($tareas)) {
             foreach ($tareas as $tarea) {
-                echo '<div class="contenedor" onclick="window.location.href=\'detalleTarea.php?id=' . $tarea->getIdTarea() . '\'" style="cursor:pointer;">';
+                $prioridad = $tarea->getPrioridad();
+                $clasePrioridad = 'prioridad-' . strtolower($prioridad);
+                echo '<div class="contenedor ' . $clasePrioridad . '" onclick="window.location.href=\'detalleTarea.php?id=' . $tarea->getIdTarea() . '\'" style="cursor:pointer;">';
                 echo '<span class="titulo-tarea">' . htmlspecialchars($tarea->getTitulo()) . '</span>';
-                echo '<div class="contenedor-botones">'; // Nuevo contenedor para los botones
+                echo '<div class="contenedor-botones">';
                 echo '<button class="boton-eliminar" onclick="event.stopPropagation(); eliminarTarea(' . $tarea->getIdTarea() . ')"><i class="fas fa-times"></i></button>';
                 echo '<button class="boton-compartir" onclick="event.stopPropagation(); abrirPopup(' . $tarea->getIdTarea() . ', \'' . addslashes($tarea->getTitulo()) . '\')"><i class="fas fa-share-alt"></i></button>';
                 echo '</div>';
@@ -394,8 +408,10 @@ if ((isset($_SESSION['nombre_usuario']))) {
             foreach ($tareasCompartidas as $compartida) {
                 $tareaCompartida = $tareaController->getTareaById($compartida['id_tarea']);
                 if ($tareaCompartida) {
+                    $prioridad = $tareaCompartida->getPrioridad();
+                    $clasePrioridad = 'prioridad-' . strtolower($prioridad);
+                    echo '<div class="contenedor ' . $clasePrioridad . '" onclick="window.location.href=\'detalleTarea.php?id=' . $tareaCompartida->getIdTarea() . '\'" style="cursor:pointer;">';
 
-                    echo '<div class="contenedor" onclick="window.location.href=\'detalleTarea.php?id=' . $tareaCompartida->getIdTarea() . '\'" style="cursor:pointer;">';
                     echo '<span style="display:block; max-width:150px; word-break:break-word;">' . htmlspecialchars($tareaCompartida->getTitulo()) . '</span>';
                     echo '</div>';
                 }

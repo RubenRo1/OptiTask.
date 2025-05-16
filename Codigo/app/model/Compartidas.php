@@ -177,19 +177,6 @@ class Compartidas
         }
     }
 
-    public static function getCompartidasByTareaAndUser($id_tarea, $id_usuario_destino)
-    {
-        try {
-            $conn = getDBConnection();
-            $stmt = $conn->prepare("SELECT * FROM compartidas WHERE id_tarea = ? AND id_usuario_destino = ?");
-            $stmt->execute([$id_tarea, $id_usuario_destino]);
-            return $stmt->fetch(PDO::FETCH_ASSOC);
-        } catch (PDOException $e) {
-            echo "Error al obtener compartida por tarea y usuario: " . $e->getMessage();
-            return null;
-        }
-    }
-
     public static function getByUserDestino($id_usuario_destino)
     {
         try {
@@ -200,6 +187,31 @@ class Compartidas
         } catch (PDOException $e) {
             echo "Error al obtener historial: " . $e->getMessage();
             return [];
+        }
+    }
+
+    public static function getCompartidasByTareaAndUser($id_tarea, $id_usuario_destino)
+    {
+        try {
+            $conn = getDBConnection();
+            $stmt = $conn->prepare("SELECT * FROM compartidas WHERE id_tarea = ? AND id_usuario_destino = ? LIMIT 1");
+            $stmt->execute([$id_tarea, $id_usuario_destino]);
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if ($row) {
+                $compartida = new Compartidas();
+                $compartida->setIdCompartidas($row['id_compartidas']);
+                $compartida->setIdTarea($row['id_tarea']);
+                $compartida->setUsuario_Origen($row['id_usuario_origen']);
+                $compartida->setUsuario_Destino($row['id_usuario_destino']);
+                $compartida->setFechaCompartida($row['fecha_compartida']);
+                return $compartida;
+            }
+
+            return null;
+        } catch (PDOException $e) {
+            echo "Error al obtener compartida por tarea y usuario: " . $e->getMessage();
+            return null;
         }
     }
 

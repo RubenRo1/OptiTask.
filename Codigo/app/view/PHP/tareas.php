@@ -58,12 +58,13 @@ if (isset($_POST['titulo'], $_POST['descripcion'], $_POST['fecha_limite'], $_POS
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tareas</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 </head>
 
 <body>
     <?php include "../Generales/header.php" ?>
     <div class="content">
-       <form method="POST" action="tareas.php">
+        <form method="POST" action="tareas.php">
             <label for="titulo">Título</label>
             <input type="text" name="titulo" placeholder="Título" required maxlength="30" value="<?php echo isset($_POST['titulo']) ? htmlspecialchars($_POST['titulo']) : ''; ?>">
 
@@ -76,22 +77,27 @@ if (isset($_POST['titulo'], $_POST['descripcion'], $_POST['fecha_limite'], $_POS
                 <div class="error-message"><?php echo $error_fecha; ?></div>
             <?php endif; ?>
 
-            <label>Prioridad:</label>
-            <select name="prioridad" required>
-                <option value="alta" <?php echo (isset($_POST['prioridad']) && $_POST['prioridad'] == 'alta') ? 'selected' : ''; ?>>Alta</option>
-                <option value="media" <?php echo (isset($_POST['prioridad']) && $_POST['prioridad'] == 'media') ? 'selected' : ''; ?> selected>Media</option>
-                <option value="baja" <?php echo (isset($_POST['prioridad']) && $_POST['prioridad'] == 'baja') ? 'selected' : ''; ?>>Baja</option>
-            </select>
+            <div class="select-wrapper">
+                <label>Prioridad:</label>
+                <select name="prioridad" required>
+                    <option value="alta" <?php echo (isset($_POST['prioridad']) && $_POST['prioridad'] == 'alta') ? 'selected' : ''; ?>>Alta</option>
+                    <option value="media" <?php echo (isset($_POST['prioridad']) && $_POST['prioridad'] == 'media') ? 'selected' : ''; ?> selected>Media</option>
+                    <option value="baja" <?php echo (isset($_POST['prioridad']) && $_POST['prioridad'] == 'baja') ? 'selected' : ''; ?>>Baja</option>
+                </select>
+                <i class="fas fa-chevron-down"></i>
+            </div>
 
-            <label>Estado:</label>
-            <select name="estado" required>
-                <option value="pendiente" <?php echo (isset($_POST['estado']) && $_POST['estado'] == 'pendiente') ? 'selected' : ''; ?> selected>Pendiente</option>
-                <option value="en progreso" <?php echo (isset($_POST['estado']) && $_POST['estado'] == 'en progreso') ? 'selected' : ''; ?>>En Progreso</option>
-                <option value="completada" <?php echo (isset($_POST['estado']) && $_POST['estado'] == 'completada') ? 'selected' : ''; ?>>Completada</option>
-            </select>
-
+            <div class="select-wrapper">
+                <label>Estado:</label>
+                <select name="estado" required>
+                    <option value="pendiente" <?php echo (isset($_POST['estado']) && $_POST['estado'] == 'pendiente') ? 'selected' : ''; ?> selected>Pendiente</option>
+                    <option value="en progreso" <?php echo (isset($_POST['estado']) && $_POST['estado'] == 'en progreso') ? 'selected' : ''; ?>>En Progreso</option>
+                    <option value="completada" <?php echo (isset($_POST['estado']) && $_POST['estado'] == 'completada') ? 'selected' : ''; ?>>Completada</option>
+                </select>
+                <i class="fas fa-chevron-down"></i>
+            </div>
             <label>Tiempo estimado:</label>
-            <input type="text" name="tiempo_estimado" placeholder="Tiempo en minutos" required value="<?php echo isset($_POST['tiempo_estimado']) ? htmlspecialchars($_POST['tiempo_estimado']) : ''; ?>">
+            <input type="number" name="tiempo_estimado" placeholder="Tiempo en minutos" required value="<?php echo isset($_POST['tiempo_estimado']) ? htmlspecialchars($_POST['tiempo_estimado']) : ''; ?>">
             <?php if (!empty($error_tiempo)): ?>
                 <div class="error-message"><?php echo $error_tiempo; ?></div>
             <?php endif; ?>
@@ -143,6 +149,7 @@ if (isset($_POST['titulo'], $_POST['descripcion'], $_POST['fecha_limite'], $_POS
     }
 
     form input[type="text"],
+    form input[type="number"],
     form input[type="date"],
     form select,
     form textarea {
@@ -160,6 +167,7 @@ if (isset($_POST['titulo'], $_POST['descripcion'], $_POST['fecha_limite'], $_POS
 
     form input[type="text"]:focus,
     form input[type="date"]:focus,
+    form input[type="number"],
     form select:focus,
     form textarea:focus {
         outline: none;
@@ -170,7 +178,7 @@ if (isset($_POST['titulo'], $_POST['descripcion'], $_POST['fecha_limite'], $_POS
         min-height: 150px;
         max-height: 300px;
         white-space: pre-wrap;
-        /* Conserva saltos de línea */
+        overflow-y: auto;
         word-wrap: break-word;
         /* Rompe palabras largas */
     }
@@ -192,19 +200,45 @@ if (isset($_POST['titulo'], $_POST['descripcion'], $_POST['fecha_limite'], $_POS
         background-color: #16A085;
     }
 
-    form select {
+    .select-wrapper {
+        position: relative;
+        display: inline-block;
+        width: 100%;
+    }
+
+    .select-wrapper select {
+        width: 100%;
+        padding-right: 40px;
+        background-color: #2B2B2B;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        padding: 10px 12px;
+        font-size: 14px;
+        appearance: none;
         -webkit-appearance: none;
         -moz-appearance: none;
-        appearance: none;
-        background-color: #2B2B2B;
-        background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='white'%3E%3Cpath d='M4 6l4 4 4-4z'/%3E%3C/svg%3E");
-        background-repeat: no-repeat;
-        background-position: right 12px center;
-        background-size: 12px;
-        padding-right: 32px;
-        cursor: pointer;
-
+        box-shadow: inset 0 0 0 1px #444;
     }
+
+    .select-wrapper i {
+        position: absolute;
+        right: 12px;
+        top: 60%;
+        pointer-events: none;
+        color: #ccc;
+        font-size: 9px;
+    }
+
+    /* Oculta las flechas en input type=number en Chrome, Safari, Edge, Opera */
+    input[type=number]::-webkit-outer-spin-button,
+    input[type=number]::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+
 </style>
+<!-- Asegúrate de que FontAwesome esté incluido en tu proyecto para usar los iconos -->
+<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 
 </html>
