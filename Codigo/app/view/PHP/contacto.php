@@ -83,7 +83,7 @@ if (!isset($_SESSION['nombre_usuario'])) {
             padding: 10px;
             margin-top: 10px;
             margin-bottom: 20px;
-            border: 1px solid #ccc;
+            border: none;
             border-radius: 6px;
             background-color: #2B2B2B;
             resize: none;
