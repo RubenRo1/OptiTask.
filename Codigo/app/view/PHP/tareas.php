@@ -20,21 +20,15 @@ $usuario = $usuarioController->getUserByName($nombre_usuario);
 $error_tiempo = '';
 $error_fecha = '';
 
-if (isset($_POST['titulo'], $_POST['descripcion'], $_POST['fecha_limite'], $_POST['prioridad'], $_POST['estado'], $_POST['tiempo_estimado'])) {
+if (isset($_POST['titulo'], $_POST['descripcion'], $_POST['fecha_limite'], $_POST['prioridad'], $_POST['estado'])) {
     $titulo = htmlspecialchars($_POST['titulo']);
     $descripcion = htmlspecialchars($_POST['descripcion']);
     $fecha_limite = htmlspecialchars($_POST['fecha_limite']);
     $prioridad = htmlspecialchars($_POST['prioridad']);
     $estado = htmlspecialchars($_POST['estado']);
-    $tiempo_estimado = htmlspecialchars($_POST['tiempo_estimado']);
 
     // Validaciones
     $valid = true;
-
-    if (!is_numeric($tiempo_estimado)) {
-        $error_tiempo = 'El tiempo estimado debe ser un número';
-        $valid = false;
-    }
 
     if (strtotime($fecha_limite) < strtotime('today')) {
         $error_fecha = 'La fecha límite no puede ser en el pasado';
@@ -44,7 +38,7 @@ if (isset($_POST['titulo'], $_POST['descripcion'], $_POST['fecha_limite'], $_POS
     if ($valid) {
         $id_usuario = $usuario->getIdUsuario();
         $tareaController = new TareaController();
-        $id_tarea = $tareaController->crearTarea($id_usuario, $titulo, $fecha_limite, $prioridad, $estado, $descripcion, $tiempo_estimado);
+        $id_tarea = $tareaController->crearTarea($id_usuario, $titulo, $fecha_limite, $prioridad, $estado, $descripcion);
         header("Location: detalleTarea.php?id=" . $id_tarea);
         exit();
     }
@@ -57,7 +51,7 @@ if (isset($_POST['titulo'], $_POST['descripcion'], $_POST['fecha_limite'], $_POS
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tareas</title>
+    <title>Crear Tarea</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 </head>
 
@@ -96,11 +90,6 @@ if (isset($_POST['titulo'], $_POST['descripcion'], $_POST['fecha_limite'], $_POS
                 </select>
                 <i class="fas fa-chevron-down"></i>
             </div>
-            <label>Tiempo estimado:</label>
-            <input type="number" name="tiempo_estimado" placeholder="Tiempo en minutos" required value="<?php echo isset($_POST['tiempo_estimado']) ? htmlspecialchars($_POST['tiempo_estimado']) : ''; ?>">
-            <?php if (!empty($error_tiempo)): ?>
-                <div class="error-message"><?php echo $error_tiempo; ?></div>
-            <?php endif; ?>
 
             <button type="submit">Crear tarea</button>
         </form>

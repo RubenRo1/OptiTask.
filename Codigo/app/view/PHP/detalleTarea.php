@@ -56,6 +56,7 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
 
         $usuarioQueCompartio = null;
         $otrosUsuariosCompartidos = [];
+        $permisoUsuario = null;
 
         if ($usuario) {
             // Si la tarea fue compartida contigo, obtener quien la compartió
@@ -77,11 +78,45 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
                     }
                 }
             }
+
+            $compartidaConmigo = $compartidasController->obtenerCompartidasPorUsuarioYTarea($tareaId, $usuario->getIdUsuario());
+            if ($compartidaConmigo) {
+                $permisoUsuario = $compartidaConmigo->getPermiso();  // Asumo que el objeto tiene este método
+            } else if ($Tareas->getIdUsuario() == $usuario->getIdUsuario()) {
+                // Si es dueño, permiso completo (por ejemplo, 'editar')
+                $permisoUsuario = 'editar';
+            } else {
+                // Si no es dueño ni está compartida, permiso nulo o 'ninguno'
+                $permisoUsuario = null;
+            }
         }
     }
 } else {
-   
-    $cont = 1;  
+
+    $cont = 1;
+}
+
+if (isset($_POST["permisos"])) {
+
+    $id_tarea = $_POST['id_tarea'] ?? null;
+    $id_usuario_destino = $_POST['usuario_destino'] ?? null;
+    $permiso = htmlspecialchars($_POST['permiso'] ?? '');
+    $result = false;
+
+    // 2) Validación mínima
+    if (! $id_tarea || ! $id_usuario_destino || ! $permiso) {
+        echo "<p style='color: red;'>Faltan datos para asignar el permiso.</p>";
+    } else {
+        require_once(CONTROLLER . 'CompartidasController.php');
+        $controller = new CompartidasController();
+
+        // 3) Procesamos y, aunque no devuelva booleano,
+        //    asumimos que si no lanza excepción, fue OK.
+        $controller->modificarPermiso($id_tarea, $id_usuario_destino, $permiso);
+    }
+
+    // 4) Redirigimos (PRG) para limpiar el POST y recargar
+    header("Location: detalleTarea.php?id=" . urlencode($id_tarea));
 }
 
 ?>
@@ -110,9 +145,22 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
                 <div class="tarea-detalle">
                     <div style="display: flex; justify-content: space-between; align-items: center;">
                         <h2><?php echo htmlspecialchars($Tareas->getTitulo()); ?></h2>
-                        <a href="editar_tarea.php?id=<?php echo $tareaId; ?>" class="boton-editar">
-                            <i class="fas fa-pen"></i>
-                        </a>
+
+
+                        <div style="display: flex; gap: 40px;">
+                            <?php if (!empty($usuariosCompartidos)) : ?>
+                                <a onclick="mostrarPopupPermisos()" class="botones">
+                                    <i class="fas fa-user-shield"></i>
+                                </a>
+                            <?php endif; ?>
+
+                            <?php if ($permisoUsuario !== 'Leer'): ?>
+                                <a href="editar_tarea.php?id=<?php echo $tareaId; ?>" class="botones">
+                                    <i class="fas fa-pen"></i>
+                                </a>
+                            <?php endif; ?>
+
+                        </div>
                     </div>
                     <div id="countdown" style="font-size: 16px; color: #f39c12; margin-top: 5px;"></div>
                     <p><?php echo nl2br(str_replace(" ", "&nbsp;", htmlspecialchars($Tareas->getDescripcion()))); ?></p>
@@ -216,8 +264,15 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
                 <div class="tooltip">
                     <h4>Compartida con:</h4>
                     <ul>
-                        <?php foreach ($usuariosCompartidos as $nombreUsuario): ?>
-                            <li><?php echo "- " . htmlspecialchars($nombreUsuario); ?></li>
+                        <?php foreach ($compartidas as $compartida): ?>
+                            <?php
+                            $usuarioDestino = Usuario::getUserById($compartida->getUsuario_Destino());
+                            if ($usuarioDestino):
+                            ?>
+                                <li>
+                                    <?php echo "- " . htmlspecialchars($usuarioDestino->getNombre()) . " (" . htmlspecialchars($compartida->getPermiso()) . ")"; ?>
+                                </li>
+                            <?php endif; ?>
                         <?php endforeach; ?>
                     </ul>
                 </div>
@@ -225,7 +280,7 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
         </div>
     <?php endif; ?>
 
- <?php if ($usuarioQueCompartio !== null): ?>
+    <?php if ($usuarioQueCompartio !== null): ?>
         <div class="usuarios-compartidos-container">
             <div class="compartida-icon">
                 <i class="fas fa-user-friends"></i>
@@ -239,8 +294,15 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
                     <?php if (!empty($otrosUsuariosCompartidos)): ?>
                         <h4>También compartido con:</h4>
                         <ul>
-                            <?php foreach ($otrosUsuariosCompartidos as $nombreUsuario): ?>
-                                <li><?php echo htmlspecialchars($nombreUsuario); ?></li>
+                            <?php foreach ($compartidas as $compartida): ?>
+                                <?php
+                                $usuarioDestino = Usuario::getUserById($compartida->getUsuario_Destino());
+                                if ($usuarioDestino && $compartida->getUsuario_Destino() != $usuario->getIdUsuario()):
+                                ?>
+                                    <li>
+                                        <?php echo "- " . htmlspecialchars($usuarioDestino->getNombre()) . " (" . htmlspecialchars($compartida->getPermiso()) . ")"; ?>
+                                    </li>
+                                <?php endif; ?>
                             <?php endforeach; ?>
                         </ul>
                     <?php endif; ?>
@@ -248,6 +310,55 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
             </div>
         </div>
     <?php endif; ?>
+
+    <div id="popupPermisos" class="popup">
+        <div class="popup-content">
+            <span class="close" onclick="cerrarPopupPermisos()">&times;</span>
+            <h3>Añadir Permisos</h3>
+            <form method="POST">
+                <input type="hidden" name="id_tarea" value="<?php echo $tareaId; ?>">
+                <label for="usuario_destino">Seleccionar usuario:</label>
+                <div class="custom-select-wrapper">
+                    <select name="usuario_destino" required>
+                        <?php
+                        // Obtenemos los usuarios que ya tienen permisos en la tarea
+                        foreach ($compartidas as $compartida) {
+                            $idUsuarioDestino = $compartida->getUsuario_Destino(); // getter para id_usuario_destino
+                            $usuarioDestino = Usuario::getUserById($idUsuarioDestino); // función que obtenga el usuario por id
+                            if ($usuarioDestino) {
+                                echo "<option value='" . $usuarioDestino->getIdUsuario() . "'>" . htmlspecialchars($usuarioDestino->getNombre()) . "</option>";
+                            }
+                        }
+                        ?>
+                    </select>
+                    <i class="fas fa-chevron-down"></i>
+                </div><br><br>
+                <label for="permiso">Permiso:</label>
+                <div class="custom-select-wrapper">
+                    <select name="permiso" id="popupPermiso" required>
+                        <option value="Editar">Editar</option>
+                        <option value="Leer">Leer</option>
+                    </select>
+                    <i class="fas fa-chevron-down"></i>
+                </div><br><br>
+                <button type="submit" name="permisos">Asignar</button>
+            </form>
+        </div>
+    </div>
+
+    <?php
+
+    ?>
+
+    <div id="popupFondo" style="
+    display:none;
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background-color:rgba(0,0,0,0.5); 
+    z-index:998;"></div>
 </body>
 <script>
     // Solo ejecutar el script si estamos en la vista de detalle de tarea
@@ -283,6 +394,16 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
             }
         });
     <?php endif; ?>
+
+    function mostrarPopupPermisos() {
+        document.getElementById("popupPermisos").style.display = "block";
+        document.getElementById('popupFondo').style.display = 'block';
+    }
+
+    function cerrarPopupPermisos() {
+        document.getElementById("popupPermisos").style.display = "none";
+        document.getElementById('popupFondo').style.display = 'none';
+    }
 </script>
 
 <style>
@@ -560,7 +681,7 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
         background-color: #34495E;
         color: white;
         margin-bottom: 10px;
-
+        resize: none;
 
     }
 
@@ -789,18 +910,56 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
     }
 
     /* Opción 2: Subrayado animado */
-    .boton-editar {
+    .botones {
         position: relative;
         color: white;
         text-decoration: none;
         transition: color 0.3s ease;
     }
 
-    .boton-editar:hover {
+    .botones:hover {
         transform: scale(1.1);
         opacity: 0.8;
         color: #ddd;
         transition: transform 0.3s ease;
+    }
+
+    .popup {
+        display: none;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: #2b2b2b;
+        padding: 25px 30px;
+        border-radius: 10px;
+        z-index: 999;
+        width: 320px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
+        color: white;
+        text-align: center;
+        font-family: Arial, sans-serif;
+    }
+
+    .custom-select-wrapper i {
+        position: absolute;
+        right: 12px;
+        top: 45%;
+        pointer-events: none;
+        color: #ccc;
+        font-size: 9px;
+    }
+
+    .popup-content h3 {
+        margin-top: 0;
+    }
+
+    .popup-content .close {
+        position: absolute;
+        top: 8px;
+        right: 12px;
+        font-size: 22px;
+        cursor: pointer;
     }
 </style>
 

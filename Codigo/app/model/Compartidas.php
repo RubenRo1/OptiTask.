@@ -7,6 +7,7 @@ class Compartidas
     private $id_tarea;
     private $id_usuario_origen;
     private $id_usuario_destino;
+    private $permiso;
     private $fecha_compartida;
 
     // Getters
@@ -29,6 +30,12 @@ class Compartidas
     {
         return $this->id_usuario_destino;
     }
+
+    public function getPermiso()
+    {
+        return $this->permiso;
+    }
+
 
     public function getFechaCompartida()
     {
@@ -56,6 +63,11 @@ class Compartidas
         $this->id_usuario_destino = $id_usuario_destino;
     }
 
+    public function setPermiso($permiso)
+    {
+        $this->permiso = $permiso;
+    }
+
     public function setFechaCompartida($fecha_compartida)
     {
         $this->fecha_compartida = $fecha_compartida;
@@ -66,8 +78,8 @@ class Compartidas
     {
         try {
             $conn = getDBConnection();
-            $stmt = $conn->prepare("INSERT INTO compartidas (id_tarea, id_usuario_origen, id_usuario_destino) VALUES (?, ?, ?)");
-            $stmt->execute([$this->id_tarea, $this->id_usuario_origen, $this->id_usuario_destino]);
+            $stmt = $conn->prepare("INSERT INTO compartidas (id_tarea, id_usuario_origen, id_usuario_destino, permiso) VALUES (?, ?, ?, ?)");
+            $stmt->execute([$this->id_tarea, $this->id_usuario_origen, $this->id_usuario_destino, $this->permiso]);
             $this->id_compartidas = $conn->lastInsertId();
         } catch (PDOException $e) {
             echo "Error al guardar el historial de estado: " . $e->getMessage();
@@ -88,6 +100,7 @@ class Compartidas
                 $historial->setIdTarea($row['id_tarea']);
                 $historial->setUsuario_Origen($row['id_usuario_origen']);
                 $historial->setUsuario_Destino($row['id_usuario_destino']);
+                $historial->setPermiso($row['permiso']);
                 $historial->setFechaCompartida($row['fecha_compartida']);
                 return $historial;
             }
@@ -114,6 +127,7 @@ class Compartidas
                 $historial->setIdTarea($row['id_tarea']);
                 $historial->setUsuario_Origen($row['id_usuario_origen']);
                 $historial->setUsuario_Destino($row['id_usuario_destino']);
+                $historial->setPermiso($row['permiso']);
                 $historial->setFechaCompartida($row['fecha_compartida']);
                 $historiales[] = $historial;
             }
@@ -124,20 +138,6 @@ class Compartidas
             return [];
         }
     }
-
-    // Obtener historial de una tarea
-    // public static function getByTarea($id_tarea)
-    // {
-    //     try {
-    //         $conn = getDBConnection();
-    //         $stmt = $conn->prepare("SELECT * FROM compartidas WHERE id_tarea = ? ORDER BY fecha_compartida DESC");
-    //         $stmt->execute([$id_tarea]);
-    //         return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    //     } catch (PDOException $e) {
-    //         echo "Error al obtener historial: " . $e->getMessage();
-    //         return [];
-    //     }
-    // }
 
     public static function getByTarea($id_tarea)
     {
@@ -153,6 +153,7 @@ class Compartidas
                 $compartida->setIdTarea($row['id_tarea']);
                 $compartida->setUsuario_Origen($row['id_usuario_origen']);
                 $compartida->setUsuario_Destino($row['id_usuario_destino']);
+                $compartida->setPermiso($row['permiso']);
                 $compartida->setFechaCompartida($row['fecha_compartida']);
                 $compartidas[] = $compartida;
             }
@@ -204,6 +205,7 @@ class Compartidas
                 $compartida->setIdTarea($row['id_tarea']);
                 $compartida->setUsuario_Origen($row['id_usuario_origen']);
                 $compartida->setUsuario_Destino($row['id_usuario_destino']);
+                $compartida->setPermiso($row['permiso']);
                 $compartida->setFechaCompartida($row['fecha_compartida']);
                 return $compartida;
             }
@@ -215,12 +217,26 @@ class Compartidas
         }
     }
 
+    public function updatePermiso()
+    {
+        try {
+            $conn = getDBConnection();
+            $stmt = $conn->prepare("UPDATE compartidas SET permiso = ? WHERE id_compartidas = ?");
+            $success = $stmt->execute([$this->permiso, $this->id_compartidas]);
+            return $success;
+        } catch (PDOException $e) {
+            // Puedes registrar el error en un log en vez de mostrarlo directamente en producción
+            error_log("Error al actualizar el permiso: " . $e->getMessage());
+            return false;
+        }
+    }
+
     public function update()
     {
         try {
             $conn = getDBConnection();
-            $stmt = $conn->prepare("UPDATE compartidas SET id_tarea = ?, id_usuario_origen = ?, id_usuario_destino = ? WHERE id_compartidas = ?");
-            $stmt->execute([$this->id_tarea, $this->id_usuario_origen, $this->id_usuario_destino, $this->id_compartidas]);
+            $stmt = $conn->prepare("UPDATE compartidas SET id_tarea = ?, id_usuario_origen = ?, id_usuario_destino = ?, permiso = ? WHERE id_compartidas = ?");
+            $stmt->execute([$this->id_tarea, $this->id_usuario_origen, $this->id_usuario_destino, $this->id_compartidas, $this->permiso]);
         } catch (PDOException $e) {
             echo "Error al actualizar la compartida: " . $e->getMessage();
         }

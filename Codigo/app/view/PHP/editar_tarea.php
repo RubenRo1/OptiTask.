@@ -29,14 +29,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $fecha_limite = $_POST['fecha_limite'];
     $estado = $_POST['estado'];
     $prioridad = $_POST['prioridad'];
-    $tiempo_estimado = $_POST['tiempo_estimado'];
 
     $valid = true;
-
-    if (!is_numeric($tiempo_estimado)) {
-        $error_tiempo = 'El tiempo estimado debe ser un número';
-        $valid = false;
-    }
 
     if (strtotime($fecha_limite) < strtotime(date('Y-m-d'))) {
         $error_fecha = 'La fecha límite no puede ser en el pasado';
@@ -44,7 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if ($valid) {
-        $tareaController->modificarTarea($id, $titulo, $fecha_limite, $prioridad, $estado, $descripcion, $tiempo_estimado);
+        $tareaController->modificarTarea($id, $titulo, $fecha_limite, $prioridad, $estado, $descripcion);
         header("Location: detalleTarea.php?id=$id");
         exit();
     } else {
@@ -253,9 +247,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </select>
             <i class="fas fa-chevron-down"></i>
         </div>
-
-        <label for="tiempo_estimado">Tiempo estimado (horas):</label>
-        <input type="number" name="tiempo_estimado" id="tiempo_estimado" min="1" value="<?php echo $tarea->getTiempoEstimado(); ?>" required>
 
         <button type="submit">Guardar Cambios</button>
 

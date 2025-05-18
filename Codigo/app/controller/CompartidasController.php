@@ -7,7 +7,7 @@ require_once(MODEL . 'Compartidas.php');
 class CompartidasController
 {
     // Compartir una tarea con un usuario
-    public function compartirTarea($id_tarea, $id_usuario_origen, $id_usuario_destino)
+    public function compartirTarea($id_tarea, $id_usuario_origen, $id_usuario_destino, $permiso)
     {
         // Verificar si la tarea ya está compartida con el usuario destino
         $compartidaExistente = Compartidas::getCompartidasByTareaAndUser($id_tarea, $id_usuario_destino);
@@ -21,6 +21,7 @@ class CompartidasController
             $compartida->setIdTarea($id_tarea);
             $compartida->setUsuario_Origen($id_usuario_origen);
             $compartida->setUsuario_Destino($id_usuario_destino); // Asumiendo que el usuario origen es el mismo que el destino
+            $compartida->setPermiso($permiso);
             $compartida->create();
             return $compartida;
         }
@@ -62,14 +63,28 @@ class CompartidasController
     }
 
     // Modificar una tarea compartida
-    public function modificarCompartida($id_compartidas, $id_tarea, $id_usuario_origen, $id_usuario_destino)
+    public function modificarCompartida($id_compartidas, $id_tarea, $id_usuario_origen, $id_usuario_destino, $permiso)
     {
         $compartida = Compartidas::getCompartidasById($id_compartidas);
         if ($compartida) {
             $compartida->setIdTarea($id_tarea);
             $compartida->setUsuario_Origen($id_usuario_origen);
             $compartida->setUsuario_Destino($id_usuario_destino);
+            $compartida->setPermiso($permiso);
             $compartida->update();
+        }
+    }
+
+    public function modificarPermiso($idTarea, $idUsuario, $nuevoPermiso)
+    {
+        // Obtener la fila concreta de compartición (tarea + usuario)
+        $compartida = Compartidas::getCompartidasByTareaAndUser($idTarea, $idUsuario);
+
+        if ($compartida) {
+            // Actualizamos el permiso en el objeto
+            $compartida->setPermiso($nuevoPermiso);
+            // Llamamos al método que persiste el cambio en la DB
+            return $compartida->updatePermiso();
         }
     }
 

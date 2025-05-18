@@ -7,8 +7,10 @@ require_once(MODEL . 'Usuario.php');
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $id_tarea = $_POST['id_tarea'] ?? null;
     $nombre_usuario_destino = $_POST['nombre_usuario_destino'] ?? null;
+    $permiso = $_POST['permiso'] ?? null;
 
-    if (!$id_tarea || !$nombre_usuario_destino) {
+
+    if (!$id_tarea || !$nombre_usuario_destino || !$permiso) {
         echo 'Datos incompletos.';
         exit;
     }
@@ -36,7 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
     $id_usuario_origen = Usuario::getUserByName($nombre_usuario_origen)->getIdUsuario();
     $controller = new CompartidasController();
-    $controller->compartirTarea($id_tarea, $id_usuario_origen, $usuarioDestino->getIdUsuario());
+    $controller->compartirTarea($id_tarea, $id_usuario_origen, $usuarioDestino->getIdUsuario(), $permiso);
 
     echo 'Tarea compartida con ' . htmlspecialchars($nombre_usuario_destino);
 }

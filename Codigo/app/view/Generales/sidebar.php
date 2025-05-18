@@ -240,7 +240,8 @@ if ((isset($_SESSION['nombre_usuario']))) {
             color: #ffffff;
         }
 
-        #popupCompartir input[type="text"] {
+        #popupCompartir input[type="text"],
+        select {
             width: 90%;
             padding: 10px;
             margin: 10px 0;
@@ -248,6 +249,30 @@ if ((isset($_SESSION['nombre_usuario']))) {
             border: 1px solid #888;
             background-color: #1f1f1f;
             color: white;
+
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+        }
+
+        .custom-select-wrapper {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .custom-select-wrapper select {
+            width: 100%;
+            padding-right: 30px;
+        }
+
+        .custom-select-wrapper i {
+            position: absolute;
+            right: 12px;
+            top: 45%;
+            pointer-events: none;
+            color: #ccc;
+            font-size: 9px;
         }
 
         #popupCompartir button {
@@ -391,7 +416,7 @@ if ((isset($_SESSION['nombre_usuario']))) {
                 echo '<div class="contenedor ' . $clasePrioridad . '" onclick="window.location.href=\'detalleTarea.php?id=' . $tarea->getIdTarea() . '\'" style="cursor:pointer;">';
                 echo '<span class="titulo-tarea">' . htmlspecialchars($tarea->getTitulo()) . '</span>';
                 echo '<div class="contenedor-botones">';
-                echo '<button class="boton-eliminar" onclick="event.stopPropagation(); eliminarTarea(' . $tarea->getIdTarea() . ')"><i class="fas fa-times"></i></button>';
+                echo '<button class="boton-eliminar" onclick="event.stopPropagation(); eliminarTarea(' . $tarea->getIdTarea() . ', \'' . addslashes($tarea->getTitulo()) . '\')"><i class="fas fa-times"></i></button>';
                 echo '<button class="boton-compartir" onclick="event.stopPropagation(); abrirPopup(' . $tarea->getIdTarea() . ', \'' . addslashes($tarea->getTitulo()) . '\')"><i class="fas fa-share-alt"></i></button>';
                 echo '</div>';
                 echo '</div>';
@@ -434,6 +459,16 @@ if ((isset($_SESSION['nombre_usuario']))) {
             <input type="hidden" name="id_tarea" id="popupIdTarea">
             <label for="usuario">Nombre del usuario a compartir:</label><br>
             <input type="text" name="nombre_usuario_destino" id="popupUsuario" required><br><br>
+
+            <label for="permiso">Permiso:</label><br>
+            <div class="custom-select-wrapper">
+                <select name="permiso" id="popupPermiso" required>
+                    <option value="Editar">Editar</option>
+                    <option value="Leer">Leer</option>
+                </select>
+                <i class="fas fa-chevron-down"></i>
+            </div><br><br>
+
             <button type="submit">Compartir</button>
             <button type="button" onclick="cerrarPopup()">Cancelar</button>
         </form>
@@ -503,7 +538,7 @@ if ((isset($_SESSION['nombre_usuario']))) {
 
     function abrirPopupEliminar(idTarea, tituloTarea) {
         document.getElementById('popupEliminarIdTarea').value = idTarea;
-        document.getElementById('mensajeEliminar').textContent = `¿Estás seguro que deseas eliminar la tarea: "${tituloTarea}"?`;
+        document.getElementById('mensajeEliminar').textContent = '¿Estás seguro que deseas eliminar la tarea: ' + tituloTarea;
         document.getElementById('popupEliminar').style.display = 'block';
         document.getElementById('popupFondo').style.display = 'block';
     }
@@ -519,13 +554,14 @@ if ((isset($_SESSION['nombre_usuario']))) {
 
         const idTarea = document.getElementById('popupIdTarea').value;
         const nombreUsuario = document.getElementById('popupUsuario').value;
+        const permiso = document.getElementById('popupPermiso').value;
 
         fetch('../Generales/procesarCompartir.php', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded'
                 },
-                body: 'id_tarea=' + encodeURIComponent(idTarea) + '&nombre_usuario_destino=' + encodeURIComponent(nombreUsuario)
+                body: 'id_tarea=' + encodeURIComponent(idTarea) + '&nombre_usuario_destino=' + encodeURIComponent(nombreUsuario) + '&permiso=' + encodeURIComponent(permiso)
             })
             .then(response => response.text())
             .then(data => {

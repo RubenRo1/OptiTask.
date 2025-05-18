@@ -23,7 +23,7 @@ class TareaController
     }
 
     // Crear una nueva tarea
-    public function crearTarea($id_usuario, $titulo, $fecha_limite, $prioridad, $estado, $descripcion, $tiempo_estimado)
+    public function crearTarea($id_usuario, $titulo, $fecha_limite, $prioridad, $estado, $descripcion)
     {
         $nuevaTarea = new Tarea();
         $nuevaTarea->setIdUsuario($id_usuario);
@@ -32,7 +32,7 @@ class TareaController
         $nuevaTarea->setPrioridad($prioridad);
         $nuevaTarea->setEstado($estado);
         $nuevaTarea->setDescripcion($descripcion);
-        $nuevaTarea->setTiempoEstimado($tiempo_estimado);
+ 
 
         $nuevaTarea->create();
 
@@ -42,7 +42,7 @@ class TareaController
     }
 
     // Modificar tarea (cualquier campo)
-    public function modificarTarea($id_tarea, $titulo, $fecha_limite, $prioridad, $estado, $descripcion, $tiempo_estimado)
+    public function modificarTarea($id_tarea, $titulo, $fecha_limite, $prioridad, $estado, $descripcion)
     {
         $tarea = Tarea::getTareaById($id_tarea);
         if ($tarea) {
@@ -51,7 +51,6 @@ class TareaController
             $tarea->setPrioridad($prioridad);
             $tarea->setEstado($estado);
             $tarea->setDescripcion($descripcion);
-            $tarea->setTiempoEstimado($tiempo_estimado);
 
             $tarea->update();
         }
@@ -90,15 +89,6 @@ class TareaController
         if ($tarea) {
             $tarea->setPrioridad($nuevaPrioridad);
             $tarea->updatePrioridad($nuevaPrioridad);  // Pasamos la nueva prioridad aquí
-        }
-    }
-
-    public function modificarTiempoEstimado($id_tarea, $nuevoTiempoEstimado)
-    {
-        $tarea = Tarea::getTareaById($id_tarea);
-        if ($tarea) {
-            $tarea->setTiempoEstimado($nuevoTiempoEstimado);
-            $tarea->updateTiempoEstimado($nuevoTiempoEstimado);  // Pasamos el nuevo tiempo estimado aquí
         }
     }
 
