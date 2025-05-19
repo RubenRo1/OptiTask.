@@ -34,89 +34,11 @@ if (!isset($_SESSION['nombre_usuario'])) {
 <head>
     <meta charset="UTF-8">
     <title>Contacto</title>
-    <?php include "../Generales/header.php" ?>
-    <style>
-        html,
-        body {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            min-height: 100vh;
-            /* overflow-x: hidden; */
-        }
-
-        body {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-           
-        }
-
-        .contact-form {
-
-            background-color: #1E1E1E;
-            padding: 25px 50px;
-            border: solid 1px #414548;
-            border-radius: 10px;
-            max-width: 700px;
-            margin: 8% auto;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-            color: #EEE;
-            font-family: 'Comfortaa', sans-serif;
-
-        }
-
-
-
-        .contact-form h2 {
-            margin-bottom: 20px;
-            text-align: center;
-
-        }
-
-        .contact-form input,
-        .contact-form textarea {
-            width: 100%;
-            padding: 10px;
-            margin-top: 10px;
-            margin-bottom: 20px;
-            border: none;
-            border-radius: 6px;
-            background-color: #2B2B2B;
-            resize: none;
-
-        }
-
-        .contact-form button {
-            background-color: #3A7BFF;
-            color: white;
-            border: none;
-            padding: 10px 25px;
-            border-radius: 6px;
-            cursor: pointer;
-        }
-
-        .contact-form button:hover {
-            background-color: #005ce6;
-        }
-
-        .mensaje-confirmacion {
-            color: green;
-            font-weight: bold;
-        }
-
-        .mensaje-fallo {
-            color: red;
-            font-weight: bold;
-        }
-    </style>
+    <link rel="stylesheet" href="../CSS/contacto.css">
 </head>
 
 <body>
-
+    <?php include "../Generales/header.php" ?>
     <div class="contact-form">
 
         <!-- Posible añadido -->

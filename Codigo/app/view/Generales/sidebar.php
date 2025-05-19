@@ -402,6 +402,11 @@ if ((isset($_SESSION['nombre_usuario']))) {
         .prioridad-baja {
             border-left: 2px solid #4CAF50;
         }
+
+        .tarea.Completada {
+            color: #66bb6a;
+            font-weight: bold;
+        }
     </style>
 </head>
 
@@ -414,7 +419,7 @@ if ((isset($_SESSION['nombre_usuario']))) {
                 $prioridad = $tarea->getPrioridad();
                 $clasePrioridad = 'prioridad-' . strtolower($prioridad);
                 echo '<div class="contenedor ' . $clasePrioridad . '" onclick="window.location.href=\'detalleTarea.php?id=' . $tarea->getIdTarea() . '\'" style="cursor:pointer;">';
-                echo '<span class="titulo-tarea">' . htmlspecialchars($tarea->getTitulo()) . '</span>';
+                echo '<span class="titulo-tarea tarea ' . $tarea->getEstado() . '">' . htmlspecialchars($tarea->getTitulo()) . '</span>';
                 echo '<div class="contenedor-botones">';
                 echo '<button class="boton-eliminar" onclick="event.stopPropagation(); eliminarTarea(' . $tarea->getIdTarea() . ', \'' . addslashes($tarea->getTitulo()) . '\')"><i class="fas fa-times"></i></button>';
                 echo '<button class="boton-compartir" onclick="event.stopPropagation(); abrirPopup(' . $tarea->getIdTarea() . ', \'' . addslashes($tarea->getTitulo()) . '\')"><i class="fas fa-share-alt"></i></button>';

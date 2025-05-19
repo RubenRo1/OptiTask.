@@ -1,0 +1,78 @@
+.general1 {
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  background: #3a3a3a;
+  backdrop-filter: blur(5px);
+  transition: all 0.3s ease;
+  margin-top: 90px;
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 800px;
+}
+
+.general1 h1 {
+  color: #ff6b6b;
+  margin: 0 auto 30px;
+  font-weight: 600;
+  font-size: 2rem;
+  padding-bottom: 10px;
+  display: block;
+  width: fit-content;
+  border-bottom: 2px solid #ff6b6b;
+}
+
+.general1 p {
+  color: #cccccc;
+  font-style: italic;
+  margin: 10px 0;
+  text-align: center;
+  /* Centrado */
+}
+
+.tarea-urgente {
+  background-color: #444;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  border-left: 5px solid #ff6b6b;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  text-align: left;
+  /* Alineación izquierda para el contenido de tareas */
+}
+
+/* Resto del CSS se mantiene igual */
+.tarea-urgente:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+}
+
+.tarea-urgente strong {
+  font-size: 1.2rem;
+  color: #ffffff;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.tarea-urgente .prioridad {
+  color: #ff6b6b;
+  font-weight: bold;
+  margin: 5px 0;
+}
+
+.tarea-urgente .fecha {
+  color: #ffd700;
+  margin: 5px 0;
+}
+
+.prioridad_Alta {
+  color: #ff4444;
+}
+
+.prioridad_Media {
+  color: #ffa500;
+}
+
+.prioridad_Baja {
+  color: #4caf50;
+}
