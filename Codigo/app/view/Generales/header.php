@@ -2,7 +2,9 @@
     <nav>
         <div class="nav-left">
             <ul>
-                <li class="Tamaño"><a href="inicio.php" class="Logo"><span>O</span>pti<span>T</span>ask</a></li>
+                <li>
+                    <a href="inicio.php" class="Logo nav-link Tamaño"><span>O</span>pti<span>T</span>ask</a>
+                </li>
                 <li><a href="tareas.php">Crear Tarea</a></li>
                 <li><a href="detalleTarea.php">Mis Tareas</a></li>
                 <li><a href="urgentes.php">Urgentes</a></li>
@@ -136,5 +138,25 @@
         object-fit: cover;
         border: 2px solid #3A7BFF;
         box-shadow: 0 0 8px rgba(0, 0, 0, 0.4);
+    }
+
+    @media (max-width: 768px) {
+
+
+
+        nav ul li a {
+            padding: 6px 10px;
+            font-size: 14px;
+        }
+
+        .Tamaño {
+            font-size: 23px;
+        }
+
+        .perfil-img {
+            width: 28px;
+            height: 28px;
+        }
+
     }
 </style>
