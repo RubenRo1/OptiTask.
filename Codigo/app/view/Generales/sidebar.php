@@ -150,12 +150,16 @@ if ((isset($_SESSION['nombre_usuario']))) {
             z-index: 1100;
             background: none;
             border: none;
-            color: white;
+            color: #bbbbbb;
             font-size: 22px;
             transition: left 0.3s ease-in-out, transform 0.3s ease-in-out;
         }
 
-        /* Estilo para ambos botones */
+        #botonAbrir:hover {
+            color: #eeeeee;
+        }
+
+
         .boton-eliminar,
         .boton-compartir {
             display: none;
@@ -373,23 +377,11 @@ if ((isset($_SESSION['nombre_usuario']))) {
                 /* Abierta cuando se activa */
             }
 
-            /* Asegúrate de que el botón de abrir esté visible */
-            #botonAbrir {
-                display: block;
-            }
+            
+
+           
         }
 
-        @media (min-width: 769px) {
-            .sidebar {
-                left: 0;
-                /* Siempre abierta en escritorio */
-            }
-
-            /* Oculta el botón de abrir en escritorio si no es necesario */
-            #botonAbrir {
-                display: none;
-            }
-        }
 
         .prioridad-alta {
             border-left: 2px solid #ff6b6b;
