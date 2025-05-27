@@ -40,27 +40,6 @@ class UsuarioController
         return true;
     }
 
-
-
-    // Modificar datos del usuario
-    // public function modificarUsuario($nuevoNombre, $nuevoEmail, $nuevaContraseña)
-    // {
-    //     $usuario = new Usuario();
-
-    //     if (Usuario::UsuarioExiste($nuevoNombre)) {
-
-
-    //     }else {
-
-    //         $usuario->setNombre($nuevoNombre);
-    //         $usuario->setEmail($nuevoEmail);
-    //         $usuario->setContraseña($nuevaContraseña);
-    //         $usuario->update();
-
-    //     }
-
-    // }
-
     public function modificarUsuario($id_usuario, $nuevoNombre, $nuevoEmail, $nuevaContraseña, $imagen = null)
     {
         // Obtener el usuario actual desde la base de datos

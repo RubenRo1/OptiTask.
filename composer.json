@@ -1,0 +1,9 @@
+{
+    "name": "ruben/optitask",
+    "description": "Sistema de gestión de tareas",
+    "require-dev": {
+        "phpunit/phpunit": "^11.5",
+        "symfony/var-dumper": "^6.3",
+        "symfony/console": "^6.3"
+    }
+}

@@ -3,80 +3,161 @@
 require_once(__DIR__ . '/../../rutas.php');
 require_once(CONFIG . 'dbConnection.php');
 
+
+/**
+ * Clase que representa un usuario en el sistema
+ *
+ * @package Usuario
+ * @author OptiTask <optitask@gmail.com>
+ */
 class Usuario
 {
+    /** @var int Id del pedido */
     private $id_usuario;
+    /** @var string Nombre del usuario */
     private $nombre;
+    /** @var string Email del usuario */
     private $email;
+    /** @var string Contraseña del usuario */
     private $contraseña;
+    /** @var string Fecha de registro del usuario */
     private $fecha_registro;
-    private $imagen;  // Nueva propiedad para la imagen
+    /** @var string Imagen del usuario */
+    private $imagen;
 
-    // Getters
+     /**
+     * Obtiene el ID del usuario
+     *
+     * @return int ID del usuario
+     */
     public function getIdUsuario()
     {
         return $this->id_usuario;
     }
 
+    /**
+     * Obtiene el nombre del usuario
+     * 
+     * @return string Nombre del usuario
+     */
     public function getNombre()
     {
         return $this->nombre;
     }
 
+    /**
+     * Obtiene el email del usuario
+     * 
+     * @return string Email del usuario
+     */
     public function getEmail()
     {
         return $this->email;
     }
 
+    /**
+     * Obtiene la contrasela del usuario
+     * 
+     * @return string Contraseña del usuario
+     */
     public function getContraseña()
     {
         return $this->contraseña;
     }
 
+    /**
+     * Obtiene la fecha de registro del usuario
+     * 
+     * @return string Fecha de registro del usuario
+     */
     public function getFechaRegistro()
     {
         return $this->fecha_registro;
     }
 
+    /**
+     * Obtiene la imagen del usuario
+     * 
+     * @return string Imagen del usuario
+     */
     public function getImagen()
     {
         return $this->imagen;
     }
 
 
-    // Setters
+    /**
+     * Establece la ID del usuario
+     *
+     * @param string $id_usuario ID del usuario
+     * @return void
+     */
     public function setIdUsuario($id_usuario)
     {
         $this->id_usuario = $id_usuario;
     }
 
+    /**
+     * Establece el nombre del usuario
+     *
+     * @param string $nombre Nombre del usuario
+     * @return void
+     */
     public function setNombre($nombre)
     {
         $this->nombre = $nombre;
     }
 
+    /**
+     * Establece el email del usuario
+     *
+     * @param string $email Email del usuario
+     * @return void
+     */
     public function setEmail($email)
     {
         $this->email = $email;
     }
 
+    /**
+     * Establece la contraseña del usuario
+     *
+     * @param string $contraseña Contraseña del usuario
+     * @return void
+     */
     public function setContraseña($contraseña)
     {
         $this->contraseña = $contraseña;
     }
 
+    /**
+     * Establece la fecha de registro del usuario
+     *
+     * @param string $fecha_registro Fecha de registro del usuario
+     * @return void
+     */
     public function setFechaRegistro($fecha_registro)
     {
         $this->fecha_registro = $fecha_registro;
     }
 
+    /**
+     * Establece la imagen del usuario
+     *
+     * @param string $imagen Imagen del usuario
+     * @return void
+     */
     public function setImagen($imagen)
     {
         $this->imagen = $imagen;
     }
 
 
-    // Crear un nuevo usuario
+    /**
+     * Crea un nuevo usuario en la base de datos
+     *
+     * @return void
+     */
     public function create()
     {
         try {
@@ -88,7 +169,12 @@ class Usuario
             echo "Error al crear el usuario: " . $e->getMessage();
         }
     }
-    // Obtener todos los usuarios
+
+    /**
+     * Obtiene todos los usuarios de la base de datos
+     *
+     * @return Usuario[] Lista de usuarios
+     */
     public static function getAllUsers()
     {
         try {
@@ -104,7 +190,7 @@ class Usuario
                 $usuario->setEmail($row['email']);
                 $usuario->setContraseña($row['contraseña']);
                 $usuario->setFechaRegistro($row['fecha_registro']);
-                $usuario->setImagen($row['imagen']); // Asignar la imagen
+                $usuario->setImagen($row['imagen']);
                 $usuarios[] = $usuario;
             }
 
@@ -116,7 +202,12 @@ class Usuario
     }
 
 
-    // Obtener un usuario por su nombre
+    /**
+     * Obtiene un usuario por su nombre
+     *
+     * @param string $nombre Nombre del usuario
+     * @return Usuario|null Usuario encontrado o null si no existe
+     */
     public static function getUserByName($nombre)
     {
         try {
@@ -142,7 +233,12 @@ class Usuario
     }
 
 
-    // Obtener un usuario por email
+    /**
+     * Obtiene un usuario por su email
+     *
+     * @param string $email Email del usuario
+     * @return Usuario|null Usuario encontrado o null si no existe
+     */
     public static function getUserByEmail($email)
     {
         try {
@@ -166,7 +262,12 @@ class Usuario
         }
     }
 
-    // Obtener un usuario por su ID
+/**
+     * Obtiene un usuario por su ID
+     *
+     * @param int $id_usuario ID del usuario
+     * @return Usuario|null Usuario encontrado o null si no existe
+     */
     public static function getUserById($id_usuario)
     {
         try {
@@ -191,7 +292,13 @@ class Usuario
         }
     }
 
-    // Verificar la contraseña al iniciar sesión
+    /**
+     * Verifica si las credenciales del usuario son válidas
+     *
+     * @param string $email Email del usuario
+     * @param string $contraseña Contraseña del usuario
+     * @return Usuario|false Usuario encontrado o false si las credenciales son incorrectas
+     */
     public static function verifyPassword($email, $contraseña)
     {
 
@@ -203,7 +310,12 @@ class Usuario
         return false;
     }
 
-    //Actualiza la contraseña del usuario
+    /**
+     * Actualiza la contraseña del usuario
+     *
+     * @param string $nuevaContraseña Nueva contraseña del usuario
+     * @return void
+     */
     public function updatePassword($nuevaContraseña)
     {
         try {
@@ -216,7 +328,11 @@ class Usuario
     }
 
 
-    // Actualizar datos del usuario
+    /**
+     * Actualiza los datos del usuario
+     *
+     * @return void
+     */
     public function update()
     {
         try {
@@ -228,7 +344,12 @@ class Usuario
         }
     }
 
-    // Verificar si el email ya existe
+/**
+     * Verifica si el email del usuario ya existe
+     *
+     * @param string $email Email del usuario
+     * @return bool true si el email existe, false en caso contrario
+     */
     public static function EmailExiste($email)
     {
         try {
@@ -244,7 +365,12 @@ class Usuario
     }
 
 
-    // Verificar si el nombre de usuario ya existe
+    /**
+     * Verifica si el nombre de usuario ya existe
+     *
+     * @param string $nombre Nombre del usuario
+     * @return bool true si el nombre de usuario existe, false en caso contrario
+     */
     public static function UsuarioExiste($nombre)
     {
         try {
@@ -259,7 +385,11 @@ class Usuario
         }
     }
 
-    // Eliminar usuario
+    /**
+     * Elimina el usuario de la base de datos
+     *
+     * @return void
+     */
     public function delete()
     {
         try {

@@ -171,26 +171,11 @@ if ((isset($_SESSION['nombre_usuario']))) {
             border-radius: 3px;
             transition: all 0.2s;
             height: 24px;
-            /* Altura fija para los botones */
             width: 24px;
-            /* Ancho fijo para los botones */
             display: flex;
             align-items: center;
             justify-content: center;
         }
-
-        .boton-eliminar,
-        .boton-compartir {
-            display: none;
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-size: 14px;
-            padding: 4px 6px;
-            border-radius: 3px;
-            transition: all 0.2s;
-        }
-
         .boton-eliminar {
             color: #e74c3c;
         }
@@ -381,7 +366,6 @@ if ((isset($_SESSION['nombre_usuario']))) {
 
            
         }
-
 
         .prioridad-alta {
             border-left: 2px solid #ff6b6b;
