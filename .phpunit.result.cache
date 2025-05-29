@@ -1,0 +1,1 @@
+{"version":1,"defects":{"testFuncionalLogin::testLogin":7,"testFuncionalLogin::testLogout":7},"times":{"testUsuario::testSetYGetNombre":0.003,"testCrearTarea::testCrearYObtenerTarea":0.035,"testActualizarTituloTarea::testActualizarTarea":0.048,"testFuncionalLogin::testLogin":0.03,"testFuncionalLogin::testLogout":0.003}}

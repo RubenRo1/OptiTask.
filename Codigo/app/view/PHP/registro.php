@@ -91,7 +91,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['formCreate']) && $_PO
 
             <p id="pregunta">¿Ya tienes cuenta?</p>
             <a class="enlace" href="../PHP/login.php">Iniciar Sesión</a>
-            <a class="enlace" href="../PHP/inicio.php">Volver al Inicio</a>
         </div>
     </div>
 </body>
