@@ -6,7 +6,7 @@ function getDBConnection()
     $host = "localhost";
     $db_name = 'optitask';
     $username = "admin";
-    $password = "admin";
+    $password = "admin123";
 
     try {
         $conn = new PDO("mysql:host=$host;dbname=$db_name", $username, $password);
